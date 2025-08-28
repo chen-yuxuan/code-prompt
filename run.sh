@@ -1,17 +1,15 @@
 #!/bin/sh
-username="$USER"
-IMAGE=/netscratch/enroot/nvcr.io_nvidia_pytorch_21.08-py3.sqsh
-WORKDIR=/netscratch/$username/code/solution-yuxuan
+IMAGE=/netscratch/enroot/nvcr.io_nvidia_pytorch_21.12-py3.sqsh
 
 srun -K \
-  --container-mounts=/netscratch:/netscratch,/ds:/ds,$HOME:$HOME \
-  --job-name=code-prompt-sst2 \
+  --container-mounts="`pwd`":"`pwd`" \
+  --job-name="code-prompt" \
   --export=ALL,HF_HUB_CACHE=/ds/models/hf-cache-slt/ \
-  --container-workdir=$WORKDIR \
+  --container-workdir="`pwd`" \
   --container-image=$IMAGE \
   --cpus-per-task=6 \
   --gpus-per-task=1 \
-  --mem-per-cpu=4G \
+  --mem-per-cpu=20G \
   --ntasks=1 \
   --nodes=1 \
   $*

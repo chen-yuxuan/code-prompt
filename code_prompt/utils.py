@@ -16,3 +16,20 @@ def seed_everything(seed: int) -> None:
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
+
+
+def adjust_code_prompt_template(orig_prompt: str, model_name: str) -> str:
+    """Adjusts the code prompt template based on the model name.
+    `orig_prompt` is to prompt for future code on the right.
+    For Code-Llama models, keep the original prompt.
+    For DeepSeek-Coder models, use |fim_begin|, |fim_hole|, |fim_end| tokens.
+    For CodeGemma models, use <fim_prefix>, <fim_middle>, <fim_suffix> tokens.
+    """
+    if "codellama" in model_name.lower() or "deepseek-coder" in model_name.lower():
+        return orig_prompt
+    elif "codegemma" in model_name.lower():
+        return orig_prompt.replace("def ", "<fim_prefix>def ").replace(
+            "pass", "<fim_middle>pass<fim_suffix>"
+        )
+    else:
+        return orig_prompt
