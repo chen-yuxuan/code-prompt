@@ -10,7 +10,7 @@ from transformers import (
     GemmaTokenizer,
 )
 import torch
-from vllm import LLM, SamplingParams
+import vllm
 
 from ..prompts.sst import get_nl_prompt, get_code_prompt
 from ..settings import HF_TOKEN
@@ -19,10 +19,12 @@ from ..models.codellm import (
     code_complete_qwen,
     code_complete,
 )
+from ..models.llm import get_client, get_response
 
 
 def run_sst(
     model_name: str = "Qwen/Qwen2.5-32B-Instruct",
+    enforce_code_prompt: bool = False,
     shots: int = 0,
     seed: int = 42,
     type_hint: bool = True,
@@ -61,8 +63,7 @@ def run_sst(
                 trust_remote_code=True,
             ).eval()
     else:
-        sampling_params = SamplingParams(temperature=0)
-        model = LLM(model=model_name, trust_remote_code=True)
+        model = get_client(model_name)
 
     examples = []
     for example in tqdm(testset):
@@ -107,12 +108,20 @@ def run_sst(
                 )
 
         else:
-            prompt = get_nl_prompt(text=text, few_shot_examples=few_shot_examples)
-            response = model.generate(
+            if enforce_code_prompt:
+                prompt = get_code_prompt(
+                    text=text,
+                    few_shot_examples=few_shot_examples,
+                    type_hint=type_hint,
+                    model=model_name,
+                )
+            else:
+                prompt = get_nl_prompt(text=text, few_shot_examples=few_shot_examples)
+            response = get_response(
                 prompt,
-                sampling_params=sampling_params,
+                client=model,
+                model=model_name,
             )
-            response = response[0].outputs[0].text.strip()
         examples.append(
             {
                 "id": example["idx"],
@@ -123,7 +132,7 @@ def run_sst(
         )
 
     _model_name = model_name.split("/")[-1].replace(".", "")
-    output_path = f"sst2_{_model_name}_{shots}_shot.json"
+    output_path = f"./outputs/sst2_{_model_name}_{shots}_shot.json"
     if "code" in model_name.lower() and type_hint is False:
         output_path = output_path.replace(".json", "_no-typing.json")
     with open(output_path, "w") as f:
