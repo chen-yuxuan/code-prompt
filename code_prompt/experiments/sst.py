@@ -28,13 +28,14 @@ def run_sst(
     shots: int = 0,
     seed: int = 42,
     type_hint: bool = True,
+    data_path: str = None,
 ):
     logging.basicConfig(level=logging.INFO)
     login(token=HF_TOKEN)
 
-    testset = load_dataset("stanfordnlp/sst2", split="validation")
+    testset = load_dataset(data_path, split="validation")
     if shots > 0:
-        trainset = load_dataset("stanfordnlp/sst2", split="train")
+        trainset = load_dataset(data_path, split="train")
         few_shot_examples = trainset.shuffle(seed=seed).select(range(shots))
     else:
         few_shot_examples = None
@@ -80,6 +81,7 @@ def run_sst(
                     prompt,
                     model=model,
                     tokenizer=tokenizer,
+                    max_new_tokens=2,
                 )
             elif "qwen" in model_name.lower():
                 if "instruct" in model_name.lower():
@@ -99,12 +101,14 @@ def run_sst(
                     prompt,
                     model,
                     tokenizer,
+                    max_new_tokens=2,
                 )
             else:  # deepseek and llama coder
                 response = code_complete(
                     prompt,
                     model,
                     tokenizer,
+                    max_new_tokens=2,
                 )
 
         else:
@@ -115,25 +119,35 @@ def run_sst(
                     type_hint=type_hint,
                     model=model_name,
                 )
+                response = get_response(
+                    prompt,
+                    client=model,
+                    model=model_name,
+                    enforce_code_prompt=True,
+                    max_tokens=1,
+                )
             else:
                 prompt = get_nl_prompt(text=text, few_shot_examples=few_shot_examples)
-            response = get_response(
-                prompt,
-                client=model,
-                model=model_name,
-            )
+                response = get_response(
+                    prompt,
+                    client=model,
+                    model=model_name,
+                )
         examples.append(
             {
                 "id": example["idx"],
                 "text": text,
                 "label": example["label"],
-                "pred": response,
+                "response": response,
             }
         )
 
     _model_name = model_name.split("/")[-1].replace(".", "")
-    output_path = f"./outputs/sst2_{_model_name}_{shots}_shot.json"
-    if "code" in model_name.lower() and type_hint is False:
-        output_path = output_path.replace(".json", "_no-typing.json")
+    output_path = f"./outputs/sst2_{_model_name}_{shots}_shot"
+    if enforce_code_prompt:
+        output_path += "_codeprompt"
+    if not type_hint:
+        output_path += "-notype"
+    output_path += ".json"
     with open(output_path, "w") as f:
         json.dump(examples, f, indent=4, ensure_ascii=True)

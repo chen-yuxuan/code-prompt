@@ -12,7 +12,8 @@ MODELS = [
     "Qwen/Qwen2.5-Coder-7B",
     "Qwen/Qwen2.5-7B-Instruct",
     "Qwen/Qwen2.5-Coder-3B",
-    "Qwen/Qwen2.5-3B-Instruct",]
+    "Qwen/Qwen2.5-3B-Instruct",
+]
 
 ALL_MODELS = [
     "Qwen/Qwen3-Coder-30B-A3B-Instruct",
@@ -79,7 +80,8 @@ for model in models:
             shots=args.shots,
             seed=args.seed,
             type_hint=args.type_hint,
-        )           
+            data_path="./data/stanfordnlp___sst2",
+        )
     except Exception as e:
         logging.error(f"Experiment with model {model} failed with error: {e}")
         continue
@@ -91,8 +93,19 @@ for model in models:
         logging.info(f"Running experiment with model {model} without type hint")
         # try and if fails, print error and continue
         try:
-            run_sst(model, enforce_code_prompt=False, shots=args.shots, seed=args.seed, type_hint=False)           
+            run_sst(
+                model,
+                enforce_code_prompt=False,
+                shots=args.shots,
+                seed=args.seed,
+                type_hint=False,
+                data_path="./data/stanfordnlp___sst2",
+            )
         except Exception as e:
-            logging.error(f"Experiment with model {model} without type hint failed with error: {e}")
+            logging.error(
+                f"Experiment with model {model} without type hint failed with error: {e}"
+            )
             continue
-        logging.info(f"Experiment with model {model} without type hint completed successfully.")
+        logging.info(
+            f"Experiment with model {model} without type hint completed successfully."
+        )

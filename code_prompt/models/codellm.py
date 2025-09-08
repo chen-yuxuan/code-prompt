@@ -21,7 +21,7 @@ def code_complete_gemma(
     with torch.no_grad():
         outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
     response = tokenizer.decode(outputs[0][prompt_len:])
-    return response
+    return response.strip()
 
 
 def code_complete_qwen(
@@ -45,7 +45,7 @@ def code_complete_qwen(
         )
     # The generated_ids include prompt_ids, we only need to decode the tokens after prompt_ids.
     response = tokenizer.decode(outputs[0][prompt_len:], skip_special_tokens=True)
-    return response
+    return response.strip()
 
 
 def code_complete(
@@ -61,4 +61,4 @@ def code_complete(
     with torch.no_grad():
         outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
     response = tokenizer.decode(outputs[0][prompt_len:], skip_special_tokens=True)
-    return response
+    return response.strip()

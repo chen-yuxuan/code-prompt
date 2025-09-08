@@ -76,7 +76,7 @@ class SmilerFewShotDataset(SmilerDataset):
         """Sample the indices in the dataset: For each of the `N` classes, sample `K` indices."""
         # get a list of valid classes
         if not self.include_no_relation:
-            self.class_indices.pop("no_relation", None)        
+            self.class_indices.pop("no_relation", None)
 
         # sample K-shots for each sampled class; take all if the data is not sufficient for this class
         sampled_indices: List[int] = []

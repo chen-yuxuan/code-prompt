@@ -22,7 +22,7 @@ CODE_PROMPT = (
     "{few_shot_examples}"
     "# Test case for inference\n"
     "text = {text}\n"
-    "assert (classify_sentiment(text) == "
+    'assert (classify_sentiment(text) == "'
 )
 CODE_SHOT_PROMPT = (
     "\n# Example test case"

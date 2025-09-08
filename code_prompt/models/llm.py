@@ -33,27 +33,40 @@ def get_response(
     client: str | OpenAI | genai.Client | vllm.LLM,
     model: str,
     api_key: Optional[str] = None,
+    enforce_code_prompt: bool = False,
+    max_tokens: int = None,
 ) -> str:
     """Get response from the specified LLM model."""
     if isinstance(client, str):
         client = get_client(client, api_key=api_key)
     if isinstance(client, OpenAI):
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
-        )
-        return response.choices[0].message.content
+        if enforce_code_prompt:
+            response = client.completions.create(
+                model=model,
+                prompt=prompt,
+                suffix='"',
+                max_tokens=max_tokens,
+                temperature=0.0,
+            )
+            return response.choices[0].text.strip()
+        else:
+            response = client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.0,
+                max_tokens=max_tokens,
+            )
+            return response.choices[0].message.content
     elif isinstance(client, genai.Client):
         response = client.models.generate_content(
             model=model,
             contents=prompt,
             config=types.GenerateContentConfig(temperature=0.0),
         )
-        return response.text
+        return response.text.strip()
     elif isinstance(client, vllm.LLM):
         sampling_params = vllm.SamplingParams(temperature=0.0)
         response = client.generate(prompt, sampling_params)[0].outputs[0]
-        return response.text
+        return response.text.strip()
     else:
         logging.error("Unsupported model.")
