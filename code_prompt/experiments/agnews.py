@@ -11,7 +11,7 @@ from transformers import (
 )
 import torch
 
-from ..prompts.sst import get_nl_prompt, get_code_prompt
+from ..prompts.agnews import get_nl_prompt, get_code_prompt
 from ..settings import HF_TOKEN
 from ..models.codellm import (
     code_complete_gemma,
@@ -21,7 +21,7 @@ from ..models.codellm import (
 from ..models.llm import get_client, get_response
 
 
-def run_sst(
+def run_agnews(
     model_name: str = "Qwen/Qwen2.5-32B-Instruct",
     enforce_code_prompt: bool = False,
     shots: int = 0,
@@ -31,9 +31,9 @@ def run_sst(
     logging.basicConfig(level=logging.INFO)
     login(token=HF_TOKEN)
 
-    testset = load_dataset("stanfordnlp/sst2", split="validation")
+    testset = load_dataset("sh0416/ag_news", split="test")
     if shots > 0:
-        trainset = load_dataset("stanfordnlp/sst2", split="train")
+        trainset = load_dataset("sh0416/ag_news", split="train")
         few_shot_examples = trainset.shuffle(seed=seed).select(range(shots))
     else:
         few_shot_examples = None
@@ -79,7 +79,7 @@ def run_sst(
                     prompt,
                     model=model,
                     tokenizer=tokenizer,
-                    max_new_tokens=2,
+                    max_new_tokens=8,
                 )
             elif "qwen" in model_name.lower():
                 if "instruct" in model_name.lower():
@@ -99,14 +99,14 @@ def run_sst(
                     prompt,
                     model,
                     tokenizer,
-                    max_new_tokens=2,
+                    max_new_tokens=8,
                 )
             else:  # deepseek and llama coder
                 response = code_complete(
                     prompt,
                     model,
                     tokenizer,
-                    max_new_tokens=2,
+                    max_new_tokens=8,
                 )
 
         else:
@@ -122,7 +122,7 @@ def run_sst(
                     client=model,
                     model=model_name,
                     enforce_code_prompt=True,
-                    max_tokens=1,
+                    max_tokens=8,
                 )
             else:
                 prompt = get_nl_prompt(text=text, few_shot_examples=few_shot_examples)
@@ -130,7 +130,7 @@ def run_sst(
                     prompt,
                     client=model,
                     model=model_name,
-                    max_tokens=1 if not "deepseek" in model_name.lower() else 32,
+                    max_tokens=8 if not "deepseek" in model_name.lower() else 32,
                 )
         examples.append(
             {
@@ -142,7 +142,7 @@ def run_sst(
         )
 
     _model_name = model_name.split("/")[-1].replace(".", "")
-    output_path = f"./outputs/sst2_{_model_name}_{shots}_shot"
+    output_path = f"./outputs/agnews_{_model_name}_{shots}_shot"
     if enforce_code_prompt:
         output_path += "_codeprompt"
     if not type_hint:

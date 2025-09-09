@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name="code-prompt",
@@ -19,5 +19,7 @@ setup(
         "sentencepiece",
         "tqdm",
         "vllm",
+        "openai",
+        "google",
     ],
 )

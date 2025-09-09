@@ -80,7 +80,6 @@ for model in models:
             shots=args.shots,
             seed=args.seed,
             type_hint=args.type_hint,
-            data_path="./data/stanfordnlp___sst2",
         )
     except Exception as e:
         logging.error(f"Experiment with model {model} failed with error: {e}")
@@ -99,7 +98,6 @@ for model in models:
                 shots=args.shots,
                 seed=args.seed,
                 type_hint=False,
-                data_path="./data/stanfordnlp___sst2",
             )
         except Exception as e:
             logging.error(
