@@ -143,10 +143,11 @@ def run_sst(
 
     _model_name = model_name.split("/")[-1].replace(".", "")
     output_path = f"./outputs/sst2_{_model_name}_{shots}_shot"
-    if enforce_code_prompt:
+    if enforce_code_prompt == True:
         output_path += "_codeprompt"
     if not type_hint:
         output_path += "-notype"
     output_path += ".json"
     with open(output_path, "w") as f:
         json.dump(examples, f, indent=4, ensure_ascii=True)
+    logging.info(f"SST-2 results saved to {output_path}")

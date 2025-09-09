@@ -150,3 +150,4 @@ def run_agnews(
     output_path += ".json"
     with open(output_path, "w") as f:
         json.dump(examples, f, indent=4, ensure_ascii=True)
+    logging.info(f"AGNews results saved to {output_path}")

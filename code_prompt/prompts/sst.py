@@ -1,5 +1,5 @@
 NL_PROMPT = (
-    "You are a data annotator for text classification. "
+    "You are a data annotator for sentiment classification. "
     "Your task is to read the following text and classify the text into either "
     "positive or negative based on its sentiment.\n"
     'Please answer with "positive" or "negative" only.'

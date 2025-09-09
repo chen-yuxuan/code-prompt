@@ -50,13 +50,22 @@ def get_response(
             )
             return response.choices[0].text.strip()
         else:
-            response = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.0,
-                max_tokens=max_tokens,
-            )
-            return response.choices[0].message.content
+            if "gpt-3.5-turbo-instruct" in model:
+                response = client.completions.create(
+                    model=model,
+                    prompt=prompt,
+                    max_tokens=max_tokens,
+                    temperature=0.0,
+                )
+                return response.choices[0].text.strip()
+            else:
+                response = client.chat.completions.create(
+                    model=model,
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.0,
+                    max_tokens=max_tokens,
+                )
+                return response.choices[0].message.content
     elif isinstance(client, genai.Client):
         response = client.models.generate_content(
             model=model,
