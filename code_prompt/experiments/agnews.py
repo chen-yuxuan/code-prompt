@@ -80,7 +80,6 @@ def run_agnews(
                     prompt,
                     model=model,
                     tokenizer=tokenizer,
-                    max_new_tokens=8,
                 )
             elif "qwen" in model_name.lower():
                 if "instruct" in model_name.lower():
@@ -100,14 +99,12 @@ def run_agnews(
                     prompt,
                     model,
                     tokenizer,
-                    max_new_tokens=8,
                 )
             else:  # deepseek and llama coder
                 response = code_complete(
                     prompt,
                     model,
                     tokenizer,
-                    max_new_tokens=8,
                 )
 
         else:
@@ -123,7 +120,6 @@ def run_agnews(
                     client=model,
                     model=model_name,
                     enforce_code_prompt=True,
-                    max_tokens=8,
                 )
             else:
                 prompt = get_nl_prompt(text=text, few_shot_examples=few_shot_examples)
@@ -131,12 +127,11 @@ def run_agnews(
                     prompt,
                     client=model,
                     model=model_name,
-                    max_tokens=8 if not "deepseek" in model_name.lower() else 32,
                 )
         examples.append(
             {
-                "id": example["idx"],
-                "text": text,
+                "title": example["title"],
+                "description": example["description"],
                 "label": example["label"],
                 "response": response,
             }

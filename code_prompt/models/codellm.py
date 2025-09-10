@@ -12,7 +12,7 @@ def code_complete_gemma(
     prompt: str,
     model: AutoModelForCausalLM,
     tokenizer: GemmaTokenizer,
-    max_new_tokens: int = 32,
+    max_new_tokens: int = 16,
 ) -> str:
     """Code completion for Gemma models."""
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
@@ -28,7 +28,7 @@ def code_complete_qwen(
     prompt: str,
     model: AutoModelForCausalLM,
     tokenizer: AutoTokenizer,
-    max_new_tokens: int = 32,
+    max_new_tokens: int = 16,
 ) -> str:
     """Code completion for Qwen models."""
     inputs = tokenizer([prompt], return_tensors="pt").to(model.device)
@@ -52,7 +52,7 @@ def code_complete(
     prompt: str,
     model: AutoModelForCausalLM,
     tokenizer: AutoTokenizer,
-    max_new_tokens: int = 32,
+    max_new_tokens: int = 16,
 ) -> str:
     """Code completion for DeepSeek models."""
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)

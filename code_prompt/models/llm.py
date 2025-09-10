@@ -34,7 +34,7 @@ def get_response(
     model: str,
     api_key: Optional[str] = None,
     enforce_code_prompt: bool = False,
-    max_tokens: int = None,
+    max_tokens: int = 16,
 ) -> str:
     """Get response from the specified LLM model."""
     if isinstance(client, str):
@@ -70,7 +70,9 @@ def get_response(
         response = client.models.generate_content(
             model=model,
             contents=prompt,
-            config=types.GenerateContentConfig(temperature=0.0),
+            config=types.GenerateContentConfig(
+                temperature=0.0, max_output_tokens=max_tokens
+            ),
         )
         return response.text.strip()
     elif isinstance(client, vllm.LLM):

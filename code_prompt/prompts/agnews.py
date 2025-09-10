@@ -2,7 +2,7 @@ NL_PROMPT = (
     "You are a data annotator for topic classification of news. "
     "Your task is to read the following news (Title + Description) and "
     "classify the news into one of the topics: World, Sport, Business or Sci/Tech.\n"
-    'Please answer with "World" or "Sport" or "Business" or "Sci/Tech" only.'
+    'Please answer directly with "World" or "Sport" or "Business" or "Sci/Tech" only.'
     "\n{few_shot_examples}"
     "\nHere is the text to classify:"
     "\nInput: {text}"

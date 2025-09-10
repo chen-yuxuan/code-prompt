@@ -2,7 +2,7 @@ NL_PROMPT = (
     "You are a data annotator for sentiment classification. "
     "Your task is to read the following text and classify the text into either "
     "positive or negative based on its sentiment.\n"
-    'Please answer with "positive" or "negative" only.'
+    'Please answer directly with "positive" or "negative" only.'
     "\n{few_shot_examples}"
     "\nHere is the text to classify:"
     "\nInput: {text}"

@@ -80,7 +80,6 @@ def run_sst(
                     prompt,
                     model=model,
                     tokenizer=tokenizer,
-                    max_new_tokens=2,
                 )
             elif "qwen" in model_name.lower():
                 if "instruct" in model_name.lower():
@@ -100,14 +99,12 @@ def run_sst(
                     prompt,
                     model,
                     tokenizer,
-                    max_new_tokens=2,
                 )
             else:  # deepseek and llama coder
                 response = code_complete(
                     prompt,
                     model,
                     tokenizer,
-                    max_new_tokens=2,
                 )
 
         else:
@@ -123,7 +120,6 @@ def run_sst(
                     client=model,
                     model=model_name,
                     enforce_code_prompt=True,
-                    max_tokens=1,
                 )
             else:
                 prompt = get_nl_prompt(text=text, few_shot_examples=few_shot_examples)
@@ -131,7 +127,6 @@ def run_sst(
                     prompt,
                     client=model,
                     model=model_name,
-                    max_tokens=1 if not "deepseek" in model_name.lower() else 32,
                 )
         examples.append(
             {
