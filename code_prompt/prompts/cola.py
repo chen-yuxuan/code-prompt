@@ -1,41 +1,34 @@
 NL_PROMPT = (
-    "You are a data annotator for topic classification of news. "
-    "Your task is to read the following news (Title + Description) and "
-    "classify the news into one of the topics: World, Sport, Business or Sci/Tech.\n"
-    'Please answer with "World" or "Sport" or "Business" or "Sci/Tech" only.'
+    "You are a linguist to annotate linguistic acc. "
+    "Your task is to read the following text and classify the text into either "
+    "positive or negative based on its sentiment.\n"
+    'Please answer with "positive" or "negative" only.'
     "\n{few_shot_examples}"
     "\nHere is the text to classify:"
     "\nInput: {text}"
     "\nOutput: "
 )
-NL_SHOT_PROMPT = "\nInput:\n{text}\nOutput: {{{label}}}\n"
+NL_SHOT_PROMPT = "\nInput: {text}" "\nOutput: {{{label}}}\n"
 
 CODE_PROMPT = (
-    "def classify_topic(text: str){typing}:\n"
-    '   """Classify the given text (title + description of news) into one of the following topics:\n'
-    "       - World\n"
-    "       - Sport\n"
-    "       - Business\n"
-    "       - Sci/Tech\n"
+    "def classify_sentiment(text: str){typing}:\n"
+    '   """Classify the sentiment of the given text as either positive or negative.\n'
     "   Args:\n"
-    "       - text (str): The text of news, which consists of title and description.\n"
+    "       - text (str): The text to classify.\n"
     "   Returns:\n"
-    '       Literal["World", "Sport", "Business", "Sci/Tech"]: The topic label of the text.\n'
+    '       Literal["positive", "negative"]: The sentiment label of the text.\n'
     "   pass\n"
     '   """\n\n\n'
     "{few_shot_examples}"
     "# Test case for inference\n"
     "text = {text}\n"
-    'assert (classify_topic(text) == "'
+    'assert (classify_sentiment(text) == "'
 )
 CODE_SHOT_PROMPT = (
     "\n# Example test case"
     "\ntext = {text}"
-    '\nassert (classify_topic(text) == "{label}")\n'
+    '\nassert (classify_sentiment(text) == "{label}")\n'
 )
-
-
-CLASS_ID_TO_NAME = {1: "World", 2: "Sport", 3: "Business", 4: "Sci/Tech"}
 
 
 def get_nl_prompt(text: str, few_shot_examples: list[dict] = None) -> str:
@@ -44,8 +37,8 @@ def get_nl_prompt(text: str, few_shot_examples: list[dict] = None) -> str:
         few_shot_str = ""
         for example in few_shot_examples:
             few_shot_str += NL_SHOT_PROMPT.format(
-                text=f"Title: {example['title']}\nDescription: {example['description']}",
-                label=CLASS_ID_TO_NAME[example["label"]],
+                text=example["sentence"],
+                label="positive" if example["label"] == 1 else "negative",
             )
     else:
         few_shot_str = ""
@@ -59,20 +52,18 @@ def get_code_prompt(
     model: str = None,
 ) -> str:
     """Get the code prompt."""
-    _TYPING = (
-        ' -> Literal["World", "Sport", "Business", "Sci/Tech"]' if type_hint else ""
-    )
+    _TYPING = ' -> Literal["positive", "negative"]'
     if few_shot_examples:
         few_shot_str = ""
         for example in few_shot_examples:
             few_shot_str += CODE_SHOT_PROMPT.format(
-                text=f"Title: {example['title']}\nDescription: {example['description']}",
-                label=CLASS_ID_TO_NAME[example["label"]],
+                text=repr(example["sentence"]),
+                label="positive" if example["label"] == 1 else "negative",
             )
     else:
         few_shot_str = ""
     prompt = CODE_PROMPT.format(
-        text=text,
+        text=repr(text),
         few_shot_examples=few_shot_str,
         typing=_TYPING if type_hint else "",
     )

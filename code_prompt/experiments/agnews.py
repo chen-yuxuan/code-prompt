@@ -19,6 +19,7 @@ from ..models.codellm import (
     code_complete,
 )
 from ..models.llm import get_client, get_response
+from ..utils import clean_vllm_memory
 
 
 def run_agnews(
@@ -66,7 +67,7 @@ def run_agnews(
 
     examples = []
     for example in tqdm(testset):
-        text = example["sentence"]
+        text = f"Title: {example['title']}\nDescription: {example['description']}"
         if "code" in model_name.lower():
             prompt = get_code_prompt(
                 text=text,
@@ -141,6 +142,7 @@ def run_agnews(
             }
         )
 
+    clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
     output_path = f"./outputs/agnews_{_model_name}_{shots}_shot"
     if enforce_code_prompt:

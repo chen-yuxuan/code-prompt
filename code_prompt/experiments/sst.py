@@ -19,6 +19,7 @@ from ..models.codellm import (
     code_complete,
 )
 from ..models.llm import get_client, get_response
+from ..utils import clean_vllm_memory
 
 
 def run_sst(
@@ -141,6 +142,7 @@ def run_sst(
             }
         )
 
+    clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
     output_path = f"./outputs/sst2_{_model_name}_{shots}_shot"
     if enforce_code_prompt == True:

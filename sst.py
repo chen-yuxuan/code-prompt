@@ -5,19 +5,21 @@ from code_prompt.experiments.sst import run_sst
 from code_prompt.utils import seed_everything
 
 MODELS = [
-    "Qwen/Qwen2.5-Coder-32B",
-    "Qwen/Qwen2.5-32B-Instruct",
-    "Qwen/Qwen2.5-Coder-14B",
-    "Qwen/Qwen2.5-14B-Instruct",
-    "Qwen/Qwen2.5-Coder-7B",
-    "Qwen/Qwen2.5-7B-Instruct",
-    "Qwen/Qwen2.5-Coder-3B",
-    "Qwen/Qwen2.5-3B-Instruct",
+    "google/codegemma-7b",
+    "google/gemma-7b",
+    "google/codegemma-2b",
+    "google/gemma-2b",
+    "meta-llama/CodeLlama-13b-hf",
+    "meta-llama/CodeLlama-13b-Python-hf",
+    "meta-llama/Llama-2-13b-hf",
+    "meta-llama/CodeLlama-7b-hf",
+    "meta-llama/CodeLlama-7b-Python-hf",
+    "meta-llama/Llama-2-7b-hf",
 ]
 
 ALL_MODELS = [
-    "Qwen/Qwen3-Coder-30B-A3B-Instruct",
-    "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    # "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+    # "Qwen/Qwen3-30B-A3B-Instruct-2507",
     "Qwen/Qwen2.5-Coder-32B",
     "Qwen/Qwen2.5-32B-Instruct",
     "Qwen/Qwen2.5-Coder-14B",
@@ -68,6 +70,7 @@ parser.add_argument(
 args = parser.parse_args()
 logging.basicConfig(level=logging.INFO)
 
+
 seed_everything(args.seed)
 models = MODELS if args.model is None else [args.model]
 for model in models:
@@ -86,19 +89,14 @@ for model in models:
         continue
     logging.info(f"Experiment with model {model} completed successfully.")
 
+
 # another round only for coder models with no type hint
 for model in models:
     if "code" in model.lower():
         logging.info(f"Running experiment with model {model} without type hint")
         # try and if fails, print error and continue
         try:
-            run_sst(
-                model,
-                enforce_code_prompt=False,
-                shots=args.shots,
-                seed=args.seed,
-                type_hint=False,
-            )
+            run_sst(model, shots=args.shots, seed=args.seed, type_hint=False)
         except Exception as e:
             logging.error(
                 f"Experiment with model {model} without type hint failed with error: {e}"
@@ -107,3 +105,4 @@ for model in models:
         logging.info(
             f"Experiment with model {model} without type hint completed successfully."
         )
+        clean_vllm_memory(model)
