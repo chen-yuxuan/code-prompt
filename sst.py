@@ -84,3 +84,19 @@ for model in models:
         logging.error(f"Experiment with model {model} failed with error: {e}")
         continue
     logging.info(f"Experiment with model {model} completed successfully.")
+
+# for code models, rerun without type hints
+for model in models:
+    if "code" in model.lower() and args.type_hint:
+        logging.info(f"Rerunning experiment with model {model} without type hints")
+        try:
+            run_sst(
+                model,
+                shots=args.shots,
+                seed=args.seed,
+                type_hint=False,
+            )
+        except Exception as e:
+            logging.error(f"Experiment with model {model} failed with error: {e}")
+            continue
+        logging.info(f"Experiment with model {model} completed successfully.")

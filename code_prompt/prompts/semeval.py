@@ -124,11 +124,13 @@ def get_code_prompt(
             )
     else:
         few_shot_str = ""
-    prompt = CODE_PROMPT.format(few_shot_examples=few_shot_str,
-                                text=tokens_to_text(example),
-                                subj=get_subj_text(example),
-                                obj=get_obj_text(example),
-                                typing=_TYPING if type_hint else "")
+    prompt = CODE_PROMPT.format(
+        few_shot_examples=few_shot_str,
+        text=tokens_to_text(example),
+        subj=get_subj_text(example),
+        obj=get_obj_text(example),
+        typing=_TYPING if type_hint else "",
+    )
 
     # add special tokens if necessary for different code LLMs
     if "gemma" in model.lower() or "qwen" in model.lower():

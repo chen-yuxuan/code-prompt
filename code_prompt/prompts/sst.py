@@ -70,6 +70,7 @@ def get_code_prompt(
     # add special tokens if necessary for different code LLMs
     if "gemma" in model.lower() or "qwen" in model.lower():
         return "<|fim_prefix|>" + prompt + "<|fim_suffix|>)\n<|fim_middle|>"
-    if "deepseek" in model.lower():
+    if "deepseek" in model.lower() and "v2" in model.lower():
         return "<|fim_begin|>" + prompt + "<|fim_hole|>)\n<|fim_end|>"
+    # for openai and deepseek-v3
     return prompt

@@ -1,14 +1,27 @@
 import argparse
 import logging
 
-from code_prompt.experiments.agnews import run_agnews
-from code_prompt.utils import seed_everything, clean_vllm_memory
+from code_prompt.experiments.cola import run_cola
+from code_prompt.utils import seed_everything
 
 MODELS = [
-    "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+    # >=30B then all <30B including deepseek models
     "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "Qwen/Qwen2.5-32B-Instruct",
+    "Qwen/Qwen2.5-14B-Instruct",
+    "Qwen/Qwen2.5-Coder-7B",
+    "Qwen/Qwen2.5-7B-Instruct",
+    "Qwen/Qwen2.5-Coder-3B",
+    "Qwen/Qwen2.5-3B-Instruct",
+    "google/codegemma-7b",
     "google/gemma-7b",
+    "google/codegemma-2b",
     "google/gemma-2b",
+    "meta-llama/CodeLlama-13b-hf",
+    "meta-llama/CodeLlama-13b-Python-hf",
+    "meta-llama/Llama-2-13b-hf",
+    "meta-llama/CodeLlama-7b-hf",
+    "meta-llama/CodeLlama-7b-Python-hf",
     "meta-llama/Llama-2-7b-hf",
 ]
 
@@ -33,12 +46,12 @@ ALL_MODELS = [
     "meta-llama/CodeLlama-7b-hf",
     "meta-llama/CodeLlama-7b-Python-hf",
     "meta-llama/Llama-2-7b-hf",
-    "deepseek-ai/DeepSeek-Coder-V2-Lite-Base",
-    "deepseek-ai/DeepSeek-V2-Lite",
+    # "deepseek-ai/DeepSeek-Coder-V2-Lite-Base",
+    # "deepseek-ai/DeepSeek-V2-Lite",
 ]
 
 parser = argparse.ArgumentParser(
-    description="Collect arguments for experimenting with AG News dataset."
+    description="Collect arguments for experimenting with CoLA dataset."
 )
 parser.add_argument("--seed", type=int, default=42, help="The random seed.")
 parser.add_argument(
@@ -72,7 +85,7 @@ for model in models:
     logging.info(f"Running experiment with model {model}")
     # try and if fails, print error and continue
     try:
-        run_agnews(
+        run_cola(
             model,
             enforce_code_prompt=args.enforce_code_prompt,
             shots=args.shots,

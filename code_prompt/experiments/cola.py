@@ -63,7 +63,10 @@ def run_cola(
                 trust_remote_code=True,
             ).eval()
     else:
-        model = get_client(model_name)
+        beta = False
+        if "deepseek-v3" in model_name.lower() and enforce_code_prompt:
+            beta = True
+        model = get_client(model_name, beta=beta)
 
     examples = []
     for example in tqdm(testset):

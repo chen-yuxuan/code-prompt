@@ -45,9 +45,11 @@ def clean_vllm_memory(model):
     if isinstance(model, vllm.LLM):
         destroy_model_parallel()
         destroy_distributed_environment()
-        del model.llm_engine.model_executor
+        # del model.llm_engine.model_executor
         del model
         with contextlib.suppress(Exception):
             torch.distributed.destroy_process_group()
         gc.collect()
         torch.cuda.empty_cache()
+    elif model:
+        del model
