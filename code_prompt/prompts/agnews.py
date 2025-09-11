@@ -21,8 +21,8 @@ CODE_PROMPT = (
     "       - text (str): The text of news, which consists of title and description.\n"
     "   Returns:\n"
     '       Literal["World", "Sport", "Business", "Sci/Tech"]: The topic label of the text.\n'
-    "   pass\n"
-    '   """\n\n\n'
+    '   """\n'
+    "   pass\n\n"
     "{few_shot_examples}"
     "# Test case for inference\n"
     "text = {text}\n"

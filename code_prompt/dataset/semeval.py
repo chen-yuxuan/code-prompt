@@ -35,6 +35,12 @@ class SemEvalDataset(RCDataset):
                 self.insert_entity_markers,
                 fn_kwargs={"text_column_name": self.text_column_name},
             )
+    
+    def sample(self, n: int, seed: int=42) -> List[dict]:
+        """Randomly sample `n` examples from the dataset."""
+        random.seed(seed)
+        indices = random.sample(range(len(self.dataset)), n)
+        return [self.dataset[i] for i in indices]
 
 
 class SemEvalFewShotDataset(SemEvalDataset):

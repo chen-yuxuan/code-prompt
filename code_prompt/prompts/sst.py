@@ -17,8 +17,7 @@ CODE_PROMPT = (
     "       - text (str): The text to classify.\n"
     "   Returns:\n"
     '       Literal["positive", "negative"]: The sentiment label of the text.\n'
-    "   pass\n"
-    '   """\n\n\n'
+    '   """\npass\n\n'
     "{few_shot_examples}"
     "# Test case for inference\n"
     "text = {text}\n"

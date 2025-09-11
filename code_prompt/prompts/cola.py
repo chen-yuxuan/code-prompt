@@ -17,8 +17,8 @@ CODE_PROMPT = (
     "       - text (str): The text to classify.\n"
     "   Returns:\n"
     '       Literal["acceptable", "unacceptable"]: The grammatical acceptance of the text.\n'
-    "   pass\n"
-    '   """\n\n\n'
+    '   """\n'
+    "   pass\n\n"
     "{few_shot_examples}"
     "# Test case for inference\n"
     "text = {text}\n"
