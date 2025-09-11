@@ -43,13 +43,13 @@ def run_agnews(
         if "gemma" in model_name.lower():
             tokenizer = GemmaTokenizer.from_pretrained(model_name)
             model = AutoModelForCausalLM.from_pretrained(
-                model_name, dtype=torch.float32, device_map="auto"
+                model_name, torch_dtype=torch.float32, device_map="auto"
             ).eval()
         elif "qwen" in model_name.lower():
             tokenizer = AutoTokenizer.from_pretrained(model_name)
             model = AutoModelForCausalLM.from_pretrained(
                 model_name,
-                dtype=torch.float32,
+                torch_dtype=torch.float32,
                 device_map="auto",
             ).eval()
         else:  # deepseek and llama coder
@@ -58,7 +58,7 @@ def run_agnews(
             )
             model = AutoModelForCausalLM.from_pretrained(
                 model_name,
-                dtype=torch.float32,
+                torch_dtype=torch.float32,
                 device_map="auto",
                 trust_remote_code=True,
             ).eval()

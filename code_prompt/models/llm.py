@@ -77,7 +77,7 @@ def get_response(
         return response.text.strip()
     elif isinstance(client, vllm.LLM):
         sampling_params = vllm.SamplingParams(temperature=0.0)
-        response = client.generate(prompt, sampling_params)[0].outputs[0]
+        response = client.generate(prompt, sampling_params, use_tqdm=False)[0].outputs[0]
         return response.text.strip()
     else:
         logging.error("Unsupported model.")

@@ -2,7 +2,7 @@ import argparse
 import logging
 
 from code_prompt.experiments.sst import run_sst
-from code_prompt.utils import seed_everything
+from code_prompt.utils import seed_everything, clean_vllm_memory
 
 MODELS = [
     "google/codegemma-7b",
@@ -89,20 +89,3 @@ for model in models:
         continue
     logging.info(f"Experiment with model {model} completed successfully.")
 
-
-# another round only for coder models with no type hint
-for model in models:
-    if "code" in model.lower():
-        logging.info(f"Running experiment with model {model} without type hint")
-        # try and if fails, print error and continue
-        try:
-            run_sst(model, shots=args.shots, seed=args.seed, type_hint=False)
-        except Exception as e:
-            logging.error(
-                f"Experiment with model {model} without type hint failed with error: {e}"
-            )
-            continue
-        logging.info(
-            f"Experiment with model {model} without type hint completed successfully."
-        )
-        clean_vllm_memory(model)

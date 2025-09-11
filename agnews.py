@@ -96,19 +96,3 @@ for model in models:
         logging.error(f"Experiment with model {model} failed with error: {e}")
         continue
     logging.info(f"Experiment with model {model} completed successfully.")
-
-# another round only for coder models with no type hint
-for model in models:
-    if "code" in model.lower():
-        logging.info(f"Running experiment with model {model} without type hint")
-        # try and if fails, print error and continue
-        try:
-            run_agnews(model, shots=args.shots, seed=args.seed, type_hint=False)
-        except Exception as e:
-            logging.error(
-                f"Experiment with model {model} without type hint failed with error: {e}"
-            )
-            continue
-        logging.info(
-            f"Experiment with model {model} without type hint completed successfully."
-        )

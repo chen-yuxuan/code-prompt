@@ -1,8 +1,8 @@
 NL_PROMPT = (
-    "You are a linguist to annotate linguistic acc. "
-    "Your task is to read the following text and classify the text into either "
-    "positive or negative based on its sentiment.\n"
-    'Please answer with "positive" or "negative" only.'
+    "You are a linguist to annotate grammatical acceptance. "
+    "Your task is to read the following text and tell if it is grammatically "
+    "acceptable or unacceptable in standard English.\n"
+    'Please answer with "acceptable" or "unacceptable" only.'
     "\n{few_shot_examples}"
     "\nHere is the text to classify:"
     "\nInput: {text}"
@@ -11,23 +11,23 @@ NL_PROMPT = (
 NL_SHOT_PROMPT = "\nInput: {text}" "\nOutput: {{{label}}}\n"
 
 CODE_PROMPT = (
-    "def classify_sentiment(text: str){typing}:\n"
-    '   """Classify the sentiment of the given text as either positive or negative.\n'
+    "def classify_grammatical_acceptance(text: str){typing}:\n"
+    '   """Classify the given text as either grammatically "acceptable" or "unacceptable".\n\n'
     "   Args:\n"
     "       - text (str): The text to classify.\n"
     "   Returns:\n"
-    '       Literal["positive", "negative"]: The sentiment label of the text.\n'
+    '       Literal["acceptable", "unacceptable"]: The grammatical acceptance of the text.\n'
     "   pass\n"
     '   """\n\n\n'
     "{few_shot_examples}"
     "# Test case for inference\n"
     "text = {text}\n"
-    'assert (classify_sentiment(text) == "'
+    'assert (classify_grammatical_acceptance(text) == "'
 )
 CODE_SHOT_PROMPT = (
     "\n# Example test case"
     "\ntext = {text}"
-    '\nassert (classify_sentiment(text) == "{label}")\n'
+    '\nassert (classify_grammatical_acceptance(text) == "{label}")\n'
 )
 
 
@@ -38,7 +38,7 @@ def get_nl_prompt(text: str, few_shot_examples: list[dict] = None) -> str:
         for example in few_shot_examples:
             few_shot_str += NL_SHOT_PROMPT.format(
                 text=example["sentence"],
-                label="positive" if example["label"] == 1 else "negative",
+                label="acceptable" if example["label"] == 1 else "unacceptable",
             )
     else:
         few_shot_str = ""
@@ -52,13 +52,13 @@ def get_code_prompt(
     model: str = None,
 ) -> str:
     """Get the code prompt."""
-    _TYPING = ' -> Literal["positive", "negative"]'
+    _TYPING = ' -> Literal["acceptable", "unacceptable"]' if type_hint else ""
     if few_shot_examples:
         few_shot_str = ""
         for example in few_shot_examples:
             few_shot_str += CODE_SHOT_PROMPT.format(
                 text=repr(example["sentence"]),
-                label="positive" if example["label"] == 1 else "negative",
+                label="acceptable" if example["label"] == 1 else "unacceptable",
             )
     else:
         few_shot_str = ""

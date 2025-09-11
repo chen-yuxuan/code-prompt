@@ -11,7 +11,7 @@ from transformers import (
 )
 import torch
 
-from ..prompts.sst import get_nl_prompt, get_code_prompt
+from ..prompts.cola import get_nl_prompt, get_code_prompt
 from ..settings import HF_TOKEN
 from ..models.codellm import (
     code_complete_gemma,
@@ -22,7 +22,7 @@ from ..models.llm import get_client, get_response
 from ..utils import clean_vllm_memory
 
 
-def run_sst(
+def run_cola(
     model_name: str = "Qwen/Qwen2.5-32B-Instruct",
     enforce_code_prompt: bool = False,
     shots: int = 0,
@@ -32,9 +32,9 @@ def run_sst(
     logging.basicConfig(level=logging.INFO)
     login(token=HF_TOKEN)
 
-    testset = load_dataset("stanfordnlp/sst2", split="validation")
+    testset = load_dataset("nyu-mll/glue", "cola", split="validation")
     if shots > 0:
-        trainset = load_dataset("stanfordnlp/sst2", split="train")
+        trainset = load_dataset("nyu-mll/glue", "cola", split="train")
         few_shot_examples = trainset.shuffle(seed=seed).select(range(shots))
     else:
         few_shot_examples = None
@@ -131,7 +131,7 @@ def run_sst(
         examples.append(
             {
                 "id": example["idx"],
-                "text": text,
+                "text": example["sentence"],
                 "label": example["label"],
                 "response": response,
             }
@@ -139,7 +139,7 @@ def run_sst(
 
     clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
-    output_path = f"./outputs/sst2_{_model_name}_{shots}_shot"
+    output_path = f"./outputs/cola_{_model_name}_{shots}_shot"
     if enforce_code_prompt == True:
         output_path += "_codeprompt"
     if not type_hint:
@@ -147,4 +147,4 @@ def run_sst(
     output_path += ".json"
     with open(output_path, "w") as f:
         json.dump(examples, f, indent=4, ensure_ascii=True)
-    logging.info(f"SST-2 results saved to {output_path}")
+    logging.info(f"CoLA results saved to {output_path}")
