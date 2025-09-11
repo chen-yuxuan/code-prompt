@@ -23,7 +23,7 @@ from ..utils import clean_vllm_memory
 from ..dataset import SemEvalDataset
 
 
-def run_sst(
+def run_semeval(
     model_name: str = "Qwen/Qwen2.5-32B-Instruct",
     enforce_code_prompt: bool = False,
     shots: int = 0,
@@ -64,9 +64,11 @@ def run_sst(
                 trust_remote_code=True,
             ).eval()
     else:
-        beta = False
-        if "deepseek-v3" in model_name.lower() and enforce_code_prompt:
-            beta = True
+        beta = (
+            True
+            if "deepseek-v3" in model_name.lower() and enforce_code_prompt
+            else False
+        )
         model = get_client(model_name, beta=beta)
 
     examples = []

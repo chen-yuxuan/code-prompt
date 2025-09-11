@@ -25,12 +25,12 @@ CODE_PROMPT = (
     "   pass\n\n"
     "{few_shot_examples}"
     "# Test case for inference\n"
-    "text = {text}\n"
+    'text = "{text}"\n'
     'assert (classify_topic(text) == "'
 )
 CODE_SHOT_PROMPT = (
     "\n# Example test case"
-    "\ntext = {text}"
+    '\ntext = "{text}"'
     '\nassert (classify_topic(text) == "{label}")\n'
 )
 
@@ -78,8 +78,8 @@ def get_code_prompt(
     )
 
     # add special tokens if necessary for different code LLMs
-    if "gemma" in model.lower() or "qwen" in model.lower():
+    if "codegemma" in model.lower() or "qwen" in model.lower():
         return "<|fim_prefix|>" + prompt + "<|fim_suffix|>)\n<|fim_middle|>"
-    if "deepseek" in model.lower():
+    if "deepseek-coder" in model.lower():
         return "<|fim_begin|>" + prompt + "<|fim_hole|>)\n<|fim_end|>"
     return prompt

@@ -21,7 +21,7 @@ CODE_PROMPT = (
     "   pass\n\n"
     "{few_shot_examples}"
     "# Test case for inference\n"
-    "text = {text}\n"
+    'text = "{text}"\n'
     'assert (classify_grammatical_acceptance(text) == "'
 )
 CODE_SHOT_PROMPT = (
