@@ -24,6 +24,8 @@ CODE_PROMPT = (
     "   Args:\n"
     "       - text (str): A text with a subject entity marked by <e1> and </e1>, and an object entity "
     "       marked by <e2> and </e2>.\n"
+    "       - subj (str): The subject entity in the text.\n"
+    "       - obj (str): The object entity in the text.\n"
     "   Returns:\n"
     '       Literal["Cause-Effect", "Component-Whole", "Content-Container", "Entity-Destination", '
     '       "Entity-Origin", "Instrument-Agency", "Member-Collection", "Message-Topic", '
