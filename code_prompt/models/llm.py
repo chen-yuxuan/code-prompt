@@ -26,7 +26,7 @@ def get_client(
         return genai.Client(api_key=api_key)
     if "deepseek-v3" in model.lower():
         if not api_key:
-            api_key = os.getenv("DEEPSEEK_API_KEY")
+            api_key = "sk-79006f408908450b987eccd55c4e91e4"
         base_url = (
             "https://api.deepseek.com" if not beta else "https://api.deepseek.com/beta"
         )

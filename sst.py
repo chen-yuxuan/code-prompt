@@ -53,19 +53,18 @@ parser.add_argument(
 )
 parser.add_argument(
     "--enforce_code_prompt",
-    type=bool,
-    default=False,
-    help="Whether to enforce code prompt for all models.",
+    action="store_true",
+    help="Enforce code prompt for all models.",
 )
 parser.add_argument(
     "--type_hint",
-    type=bool,
+    type=lambda x: x.lower() == "true",
     default=True,
-    help="Whether to include type hints in the code prompt.",
+    help="Include type hints (default: True)",
 )
 args = parser.parse_args()
 logging.basicConfig(level=logging.INFO)
-
+logging.info(f"Arguments: {args}")
 
 seed_everything(args.seed)
 models = MODELS if args.model is None else [args.model]
