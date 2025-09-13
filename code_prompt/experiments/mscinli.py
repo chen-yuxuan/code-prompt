@@ -11,7 +11,7 @@ from transformers import (
 )
 import torch
 
-from ..prompts.agnews import get_nl_prompt, get_code_prompt
+from ..prompts.mscinli import get_nl_prompt, get_code_prompt
 from ..settings import HF_TOKEN
 from ..models.codellm import (
     code_complete_gemma,
@@ -22,7 +22,7 @@ from ..models.llm import get_client, get_response
 from ..utils import clean_vllm_memory
 
 
-def run_agnews(
+def run_mscinli(
     model_name: str = "Qwen/Qwen2.5-32B-Instruct",
     enforce_code_prompt: bool = False,
     shots: int = 0,
@@ -32,9 +32,9 @@ def run_agnews(
     logging.basicConfig(level=logging.INFO)
     login(token=HF_TOKEN)
 
-    testset = load_dataset("sh0416/ag_news", split="test")
+    testset = load_dataset("sadat2307/MSciNLI", split="test")
     if shots > 0:
-        trainset = load_dataset("sh0416/ag_news", split="train")
+        trainset = load_dataset("sadat2307/MSciNLI", split="train")
         few_shot_examples = trainset.shuffle(seed=seed).select(range(shots))
     else:
         few_shot_examples = None
@@ -72,10 +72,9 @@ def run_agnews(
 
     examples = []
     for example in tqdm(testset):
-        text = f"Title: {example['title']}\nDescription: {example['description']}"
         if "code" in model_name.lower():
             prompt = get_code_prompt(
-                text=text,
+                example=example,
                 few_shot_examples=few_shot_examples,
                 type_hint=type_hint,
                 model=model_name,
@@ -115,35 +114,32 @@ def run_agnews(
         else:
             if enforce_code_prompt:
                 prompt = get_code_prompt(
-                    text=text,
+                    example=example,
                     few_shot_examples=few_shot_examples,
                     type_hint=type_hint,
                     model=model_name,
                 )
-                try:
-                    response = get_response(
-                        prompt,
-                        client=model,
-                        model=model_name,
-                        enforce_code_prompt=True,
-                    )
-                except Exception:
-                    response = ""
-
+                response = get_response(
+                    prompt,
+                    client=model,
+                    model=model_name,
+                    enforce_code_prompt=True,
+                )
             else:
-                prompt = get_nl_prompt(text=text, few_shot_examples=few_shot_examples)
-                try:
-                    response = get_response(
-                        prompt,
-                        client=model,
-                        model=model_name,
-                    )
-                except Exception:
-                    response = ""
+                prompt = get_nl_prompt(
+                    example=example, few_shot_examples=few_shot_examples
+                )
+                response = get_response(
+                    prompt,
+                    client=model,
+                    model=model_name,
+                )
         examples.append(
             {
-                "title": example["title"],
-                "description": example["description"],
+                "id": example["id"],
+                "domain": example["domain"],
+                "sentence1": example["sentence1"],
+                "sentence2": example["sentence2"],
                 "label": example["label"],
                 "response": response,
             }
@@ -151,7 +147,7 @@ def run_agnews(
 
     clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
-    output_path = f"./outputs/agnews_{_model_name}_{shots}_shot"
+    output_path = f"./outputs/mscinli_{_model_name}_{shots}_shot"
     if enforce_code_prompt:
         output_path += "_codeprompt"
     if not type_hint:
@@ -159,4 +155,4 @@ def run_agnews(
     output_path += ".json"
     with open(output_path, "w") as f:
         json.dump(examples, f, indent=4, ensure_ascii=True)
-    logging.info(f"AGNews results saved to {output_path}")
+    logging.info(f"MSciNLI results saved to {output_path}")

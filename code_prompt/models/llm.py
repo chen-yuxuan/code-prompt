@@ -54,7 +54,6 @@ def get_response(
                 max_tokens=max_tokens,
                 temperature=0.0,
             )
-            raise ValueError(f"\n\n{prompt}\n{response.choices[0].text}")
             return response.choices[0].text.strip()
         else:
             if "gpt-3.5-turbo-instruct" in model:

@@ -72,7 +72,7 @@ def get_nl_prompt(example: dict, few_shot_examples: list[dict] = None) -> str:
 
 
 def get_code_prompt(
-    example: str,
+    example: dict,
     few_shot_examples: list[dict] = None,
     type_hint: bool = True,
     model: str = None,
