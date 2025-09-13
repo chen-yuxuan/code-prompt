@@ -12,11 +12,11 @@ NL_PROMPT = (
     "\nInput: {text}"
     "\nOutput: The relation between {subj} and {obj} in the input is "
 )
-NL_SHOT_PROMPT = "\nInput:\n{text}\nOutput: The relation between {subj} and {obj} in the input is {{{label}}}.\n"
+NL_SHOT_PROMPT = "\nInput:\n{text}\nOutput: The relation between {subj} and {obj} in the input is {label}.\n"
 
 CODE_PROMPT = (
     "def classify_relation(text: str, subj: str, obj: str){typing}:\n"
-    '   """Classify the relation of the subject entity and object entity from the given text '
+    '   """Classify the relation of the subject entity and object entity from the given text\n'
     "   into one of the following 10 labels:\n"
     '   "Cause-Effect", "Component-Whole", "Content-Container", "Entity-Destination",\n'
     '   "Entity-Origin", "Instrument-Agency", "Member-Collection", "Message-Topic",\n'

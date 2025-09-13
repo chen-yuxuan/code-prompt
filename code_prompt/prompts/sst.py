@@ -8,7 +8,7 @@ NL_PROMPT = (
     "\nInput: {text}"
     "\nOutput: "
 )
-NL_SHOT_PROMPT = "\nInput: {text}" "\nOutput: {{{label}}}\n"
+NL_SHOT_PROMPT = "\nInput: {text}" "\nOutput: {label}\n"
 
 CODE_PROMPT = (
     "def classify_sentiment(text: str){typing}:\n"
@@ -20,12 +20,12 @@ CODE_PROMPT = (
     '   """\npass\n\n'
     "{few_shot_examples}"
     "# Test case for inference\n"
-    "text = {text}\n"
+    'text = "{text}"\n'
     'assert (classify_sentiment(text) == "'
 )
 CODE_SHOT_PROMPT = (
     "\n# Example test case"
-    "\ntext = {text}"
+    '\ntext = "{text}"'
     '\nassert (classify_sentiment(text) == "{label}")\n'
 )
 
@@ -70,7 +70,7 @@ def get_code_prompt(
     # add special tokens if necessary for different code LLMs
     if "gemma" in model.lower() or "qwen" in model.lower():
         return "<|fim_prefix|>" + prompt + "<|fim_suffix|>)\n<|fim_middle|>"
-    if "deepseek" in model.lower() and "v2" in model.lower():
+    if "deepseek-coder" in model.lower() and "v2" in model.lower():
         return "<|fim_begin|>" + prompt + "<|fim_hole|>)\n<|fim_end|>"
     # for openai and deepseek-v3
     return prompt

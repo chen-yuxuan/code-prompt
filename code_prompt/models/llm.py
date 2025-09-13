@@ -18,7 +18,7 @@ def get_client(
     """
     if model.lower() == "chatgpt" or model.lower().startswith("gpt-"):
         if not api_key:
-            api_key = os.getenv("OPENAI_API_KEY")
+            api_key = "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"
         return OpenAI(api_key=api_key)
     if model.lower().startswith("gemini"):
         if not api_key:
@@ -54,6 +54,7 @@ def get_response(
                 max_tokens=max_tokens,
                 temperature=0.0,
             )
+            raise ValueError(f"\n\n{prompt}\n{response.choices[0].text}")
             return response.choices[0].text.strip()
         else:
             if "gpt-3.5-turbo-instruct" in model:

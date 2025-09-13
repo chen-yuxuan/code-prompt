@@ -11,7 +11,7 @@ from transformers import (
 )
 import torch
 
-from ..prompts.cola import get_nl_prompt, get_code_prompt
+from ..prompts.xnli import get_nl_prompt, get_code_prompt
 from ..settings import HF_TOKEN
 from ..models.codellm import (
     code_complete_gemma,
@@ -22,8 +22,9 @@ from ..models.llm import get_client, get_response
 from ..utils import clean_vllm_memory
 
 
-def run_cola(
+def run_xnli(
     model_name: str = "Qwen/Qwen2.5-32B-Instruct",
+    language: str = "en",
     enforce_code_prompt: bool = False,
     shots: int = 0,
     seed: int = 42,
@@ -32,9 +33,9 @@ def run_cola(
     logging.basicConfig(level=logging.INFO)
     login(token=HF_TOKEN)
 
-    testset = load_dataset("nyu-mll/glue", "cola", split="validation")
+    testset = load_dataset("facebook/xnli", language, split="test")
     if shots > 0:
-        trainset = load_dataset("nyu-mll/glue", "cola", split="train")
+        trainset = load_dataset("facebook/xnli", language, split="train")
         few_shot_examples = trainset.shuffle(seed=seed).select(range(shots))
     else:
         few_shot_examples = None
@@ -72,10 +73,9 @@ def run_cola(
 
     examples = []
     for example in tqdm(testset):
-        text = example["sentence"]
         if "code" in model_name.lower():
             prompt = get_code_prompt(
-                text=text,
+                example=example,
                 few_shot_examples=few_shot_examples,
                 type_hint=type_hint,
                 model=model_name,
@@ -115,7 +115,7 @@ def run_cola(
         else:
             if enforce_code_prompt:
                 prompt = get_code_prompt(
-                    text=text,
+                    example=example,
                     few_shot_examples=few_shot_examples,
                     type_hint=type_hint,
                     model=model_name,
@@ -127,7 +127,9 @@ def run_cola(
                     enforce_code_prompt=True,
                 )
             else:
-                prompt = get_nl_prompt(text=text, few_shot_examples=few_shot_examples)
+                prompt = get_nl_prompt(
+                    example=example, few_shot_examples=few_shot_examples
+                )
                 response = get_response(
                     prompt,
                     client=model,
@@ -135,8 +137,8 @@ def run_cola(
                 )
         examples.append(
             {
-                "id": example["idx"],
-                "text": example["sentence"],
+                "premise": example["premise"],
+                "hypothesis": example["hypothesis"],
                 "label": example["label"],
                 "response": response,
             }
@@ -144,7 +146,7 @@ def run_cola(
 
     clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
-    output_path = f"./outputs/cola_{_model_name}_{shots}_shot"
+    output_path = f"./outputs/xnli_{language}_{_model_name}_{shots}_shot"
     if enforce_code_prompt:
         output_path += "_codeprompt"
     if not type_hint:
@@ -152,4 +154,4 @@ def run_cola(
     output_path += ".json"
     with open(output_path, "w") as f:
         json.dump(examples, f, indent=4, ensure_ascii=True)
-    logging.info(f"CoLA results saved to {output_path}")
+    logging.info(f"XNLI-{language} results saved to {output_path}")

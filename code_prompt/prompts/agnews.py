@@ -8,7 +8,7 @@ NL_PROMPT = (
     "\nInput: {text}"
     "\nOutput: "
 )
-NL_SHOT_PROMPT = "\nInput:\n{text}\nOutput: {{{label}}}\n"
+NL_SHOT_PROMPT = "\nInput:\n{text}\nOutput: {label}\n"
 
 CODE_PROMPT = (
     "def classify_topic(text: str){typing}:\n"
