@@ -50,7 +50,7 @@ def get_response(
             response = client.completions.create(
                 model=model if "deepseek" not in model.lower() else "deepseek-chat",
                 prompt=prompt,
-                suffix='"',
+                suffix='")',
                 max_tokens=max_tokens,
                 temperature=0.0,
             )

@@ -144,7 +144,7 @@ def get_code_prompt(
 
     cleaned_text = remove_special_tokens(example["text"])
     prompt = CODE_PROMPT.format(
-        few_shot_examples=few_shot_str,
+        few_shot_examples=few_shot_str + "\n",
         text=cleaned_text,
         subj=get_subj_text(cleaned_text),
         obj=get_obj_text(cleaned_text),
@@ -152,8 +152,8 @@ def get_code_prompt(
     )
 
     # add special tokens if necessary for different code LLMs
-    if "gemma" in model.lower() or "qwen" in model.lower():
-        return "<|fim_prefix|>" + prompt + "<|fim_suffix|>)\n<|fim_middle|>"
-    if "deepseek-coder" in model.lower():
-        return "<|fim_begin|>" + prompt + "<|fim_hole|>)\n<|fim_end|>"
+    if "codegemma" in model.lower() or "qwen" in model.lower():
+        return "<|fim_prefix|>" + prompt + '<|fim_suffix|>")\n<|fim_middle|>'
+    if "deepseek-coder" in model.lower() and "v2" in model.lower():
+        return "<|fim_begin|>" + prompt + '<|fim_hole|>")\n<|fim_end|>'
     return prompt

@@ -5,26 +5,8 @@ from code_prompt.experiments.mrpc import run_mrpc
 from code_prompt.utils import seed_everything
 
 MODELS = [
-    "Qwen/Qwen3-Coder-30B-A3B-Instruct",
-    "Qwen/Qwen3-30B-A3B-Instruct-2507",
-    "Qwen/Qwen2.5-Coder-32B",
-    "Qwen/Qwen2.5-32B-Instruct",
-    "Qwen/Qwen2.5-Coder-14B",
-    "Qwen/Qwen2.5-14B-Instruct",
-    "Qwen/Qwen2.5-Coder-7B",
-    "Qwen/Qwen2.5-7B-Instruct",
-    "Qwen/Qwen2.5-Coder-3B",
-    "Qwen/Qwen2.5-3B-Instruct",
-    "google/codegemma-7b",
-    "google/gemma-7b",
-    "google/codegemma-2b",
-    "google/gemma-2b",
-    "meta-llama/CodeLlama-13b-hf",
-    "meta-llama/CodeLlama-13b-Python-hf",
-    "meta-llama/Llama-2-13b-hf",
-    "meta-llama/CodeLlama-7b-hf",
-    "meta-llama/CodeLlama-7b-Python-hf",
-    "meta-llama/Llama-2-7b-hf",
+    "gpt-3.5-turbo-instruct",
+    "deepseek-v3",
 ]
 
 ALL_MODELS = [
@@ -48,8 +30,7 @@ ALL_MODELS = [
     "meta-llama/CodeLlama-7b-hf",
     "meta-llama/CodeLlama-7b-Python-hf",
     "meta-llama/Llama-2-7b-hf",
-    "gpt3.5-turbo-instruct",
-    "deepseek-v3",
+
 ]
 
 parser = argparse.ArgumentParser(

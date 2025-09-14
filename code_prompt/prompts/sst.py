@@ -63,14 +63,14 @@ def get_code_prompt(
         few_shot_str = ""
     prompt = CODE_PROMPT.format(
         text=repr(text),
-        few_shot_examples=few_shot_str,
+        few_shot_examples=few_shot_str + "\n",
         typing=_TYPING if type_hint else "",
     )
 
     # add special tokens if necessary for different code LLMs
-    if "gemma" in model.lower() or "qwen" in model.lower():
-        return "<|fim_prefix|>" + prompt + "<|fim_suffix|>)\n<|fim_middle|>"
+    if "codegemma" in model.lower() or "qwen" in model.lower():
+        return "<|fim_prefix|>" + prompt + '<|fim_suffix|>")\n<|fim_middle|>'
     if "deepseek-coder" in model.lower() and "v2" in model.lower():
-        return "<|fim_begin|>" + prompt + "<|fim_hole|>)\n<|fim_end|>"
+        return "<|fim_begin|>" + prompt + '<|fim_hole|>")\n<|fim_end|>'
     # for openai and deepseek-v3
     return prompt

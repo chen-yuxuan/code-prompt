@@ -1,14 +1,12 @@
 import argparse
 import logging
 
-from code_prompt.experiments.cola import run_cola
+from code_prompt.experiments.iris import run_iris
 from code_prompt.utils import seed_everything
 
 MODELS = [
-    "Qwen/Qwen3-Coder-30B-A3B-Instruct",
-    "Qwen/Qwen3-30B-A3B-Instruct-2507",
-    "Qwen/Qwen2.5-Coder-32B",
-    "Qwen/Qwen2.5-32B-Instruct",
+    "gpt-3.5-turbo-instruct",
+    "deepseek-v3",
 ]
 
 ALL_MODELS = [
@@ -37,7 +35,7 @@ ALL_MODELS = [
 ]
 
 parser = argparse.ArgumentParser(
-    description="Collect arguments for experimenting with CoLA dataset."
+    description="Collect arguments for experimenting with Iris dataset."
 )
 parser.add_argument("--seed", type=int, default=42, help="The random seed.")
 parser.add_argument(
@@ -62,22 +60,22 @@ parser.add_argument(
 )
 args = parser.parse_args()
 logging.basicConfig(level=logging.INFO)
-
+logging.info(f"Arguments: {args}")
 
 seed_everything(args.seed)
 models = MODELS if args.model is None else [args.model]
 for model in models:
-    logging.info(f"Running experiment with model {model}")
+    logging.info(f"Running Iris experiment with model {model}")
     # try and if fails, print error and continue
     try:
-        run_cola(
-            model,
-            enforce_code_prompt=args.enforce_code_prompt,
-            shots=args.shots,
-            seed=args.seed,
-            type_hint=args.type_hint,
-        )
+        run_iris(
+        model,
+        enforce_code_prompt=args.enforce_code_prompt,
+        shots=args.shots,
+        seed=args.seed,
+        type_hint=args.type_hint,
+    )
     except Exception as e:
-        logging.error(f"Experiment with model {model} failed with error: {e}")
+        logging.error(f"Iris-Experiment with model {model} failed with error: {e}")
         continue
-    logging.info(f"Experiment with model {model} completed successfully.")
+    logging.info(f"Iris Experiment with model {model} completed successfully.")

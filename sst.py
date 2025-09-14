@@ -36,7 +36,7 @@ ALL_MODELS = [
     "meta-llama/CodeLlama-7b-hf",
     "meta-llama/CodeLlama-7b-Python-hf",
     "meta-llama/Llama-2-7b-hf",
-    "gpt3.5-turbo-instruct",
+    "gpt-3.5-turbo-instruct",
     "deepseek-v3",
 ]
 

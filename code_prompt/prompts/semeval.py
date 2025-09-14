@@ -94,7 +94,7 @@ def get_nl_prompt(example: dict, few_shot_examples: list[dict] = None) -> str:
     else:
         few_shot_str = ""
     return NL_PROMPT.format(
-        few_shot_examples=few_shot_str,
+        few_shot_examples=few_shot_str + "\n",
         text=tokens_to_text(example),
         subj=get_subj_text(example),
         obj=get_obj_text(example),
@@ -135,8 +135,8 @@ def get_code_prompt(
     )
 
     # add special tokens if necessary for different code LLMs
-    if "gemma" in model.lower() or "qwen" in model.lower():
-        return "<|fim_prefix|>" + prompt + "<|fim_suffix|>)\n<|fim_middle|>"
-    if "deepseek-coder" in model.lower():
-        return "<|fim_begin|>" + prompt + "<|fim_hole|>)\n<|fim_end|>"
+    if "codegemma" in model.lower() or "qwen" in model.lower():
+        return "<|fim_prefix|>" + prompt + '<|fim_suffix|>")\n<|fim_middle|>'
+    if "deepseek-coder" in model.lower() and "v2" in model.lower():
+        return "<|fim_begin|>" + prompt + '<|fim_hole|>")\n<|fim_end|>'
     return prompt
