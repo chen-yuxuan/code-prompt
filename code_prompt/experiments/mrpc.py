@@ -43,13 +43,13 @@ def run_mrpc(
         if "gemma" in model_name.lower():
             tokenizer = GemmaTokenizer.from_pretrained(model_name)
             model = AutoModelForCausalLM.from_pretrained(
-                model_name, torch_dtype=torch.float32, device_map="auto"
+                model_name, dtype=torch.float32, device_map="auto"
             ).eval()
         elif "qwen" in model_name.lower():
             tokenizer = AutoTokenizer.from_pretrained(model_name)
             model = AutoModelForCausalLM.from_pretrained(
                 model_name,
-                torch_dtype=torch.float32,
+                dtype=torch.float32,
                 device_map="auto",
             ).eval()
         else:  # deepseek and llama coder
@@ -58,7 +58,7 @@ def run_mrpc(
             )
             model = AutoModelForCausalLM.from_pretrained(
                 model_name,
-                torch_dtype=torch.float32,
+                dtype=torch.float32,
                 device_map="auto",
                 trust_remote_code=True,
             ).eval()
@@ -144,7 +144,7 @@ def run_mrpc(
             }
         )
 
-    clean_vllm_memory(model)
+    model = clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
     output_path = f"./outputs/mrpc_{_model_name}_{shots}_shot"
     if enforce_code_prompt:

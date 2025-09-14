@@ -24,15 +24,19 @@ def seed_everything(seed: int) -> None:
 
 
 def clean_vllm_memory(model):
-    """Cleans up the GPU memory used by a vLLM model."""
-    if isinstance(model, vllm.LLM):
-        destroy_model_parallel()
-        destroy_distributed_environment()
-        # del model.llm_engine.model_executor
+    """Safely clean GPU memory from vLLM or HF models."""
+    try:
+        if isinstance(model, vllm.LLM):
+            # Explicitly shutdown vLLM engine
+            with contextlib.suppress(Exception):
+                model.llm_engine.shutdown()
         del model
-        with contextlib.suppress(Exception):
-            torch.distributed.destroy_process_group()
-        gc.collect()
+    except Exception as e:
+        print(f"[Warning] clean_vllm_memory: {e}")
+
+    gc.collect()
+    if torch.cuda.is_available():
         torch.cuda.empty_cache()
-    elif model:
-        del model
+        with contextlib.suppress(Exception):
+            torch.cuda.ipc_collect()
+    return None
