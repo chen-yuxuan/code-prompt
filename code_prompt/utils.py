@@ -1,4 +1,5 @@
 import contextlib
+from collections import defaultdict
 import gc
 import random
 
@@ -40,3 +41,21 @@ def clean_vllm_memory(model):
         with contextlib.suppress(Exception):
             torch.cuda.ipc_collect()
     return None
+
+
+def few_shot_per_class(dataset, k=1, seed=0, label_column_name="label"):
+    rng = random.Random(seed)
+    # group indices by label
+    indices_per_class = defaultdict(list)
+    for i, ex in enumerate(dataset):
+        indices_per_class[ex[label_column_name]].append(i)
+
+    sampled_indices = []
+    for label, indices in indices_per_class.items():
+        if len(indices) < k:
+            raise ValueError(
+                f"Class {label} has only {len(indices)} examples, needs {k}"
+            )
+        sampled_indices.extend(rng.sample(indices, k=k))
+
+    return dataset.select(sampled_indices)

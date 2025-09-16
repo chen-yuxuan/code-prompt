@@ -36,7 +36,7 @@ class SemEvalDataset(RCDataset):
                 fn_kwargs={"text_column_name": self.text_column_name},
             )
 
-    def sample(self, n: int, seed: int = 42) -> List[dict]:
+    def sample(self, n: int, seed: int = 0) -> List[dict]:
         """Randomly sample `n` examples from the dataset."""
         random.seed(seed)
         indices = random.sample(range(len(self.dataset)), n)
@@ -53,11 +53,13 @@ class SemEvalFewShotDataset(SemEvalDataset):
         self,
         data_file: str,
         kshot: int = 5,
+        seed: int = 0,
         entity_marker: bool = True,
         include_no_relation: bool = True,
     ):
         super().__init__(data_file, entity_marker)
         self.kshot = kshot
+        self.seed = seed
         self.include_no_relation = include_no_relation
 
         self.class_indices = self._get_indices_per_class()
@@ -101,9 +103,10 @@ class SemEvalFewShotDataset(SemEvalDataset):
             self.class_indices.pop(class_name, None)
 
         # sample K-shots for each sampled class
+        rng = random.Random(self.seed)
         sampled_indices: List[int] = []
         for sampled_class in list(self.class_indices.keys()):
-            sampled_indices += random.choices(
+            sampled_indices += rng.sample(
                 self.class_indices[sampled_class], k=self.kshot
             )
         return sampled_indices

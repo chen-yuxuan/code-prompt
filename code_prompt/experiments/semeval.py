@@ -20,14 +20,14 @@ from ..models.codellm import (
 )
 from ..models.llm import get_client, get_response
 from ..utils import clean_vllm_memory
-from ..dataset import SemEvalDataset
+from ..dataset import SemEvalDataset, SemEvalFewShotDataset
 
 
 def run_semeval(
     model_name: str = "Qwen/Qwen2.5-32B-Instruct",
     enforce_code_prompt: bool = False,
     shots: int = 0,
-    seed: int = 42,
+    seed: int = 0,
     type_hint: bool = True,
 ):
     logging.basicConfig(level=logging.INFO)
@@ -35,8 +35,9 @@ def run_semeval(
 
     testset = SemEvalDataset("data/semeval/test.json")
     if shots > 0:
-        trainset = SemEvalDataset("data/semeval/train.json")
-        few_shot_examples = trainset.sample(shots, seed=seed)
+        few_shot_examples = SemEvalFewShotDataset(
+            "data/semeval/train.json", kshot=shots, seed=seed
+        )
     else:
         few_shot_examples = None
 
@@ -148,7 +149,10 @@ def run_semeval(
 
     model = clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
-    output_path = f"./outputs/semeval_{_model_name}_{shots}_shot"
+    if shots == 0:
+        output_path = f"./outputs/semeval_{_model_name}_{shots}_shot"
+    else:
+        output_path = f"./outputs/semeval_{_model_name}_{shots}_shot_seed_{seed}"
     if enforce_code_prompt == True:
         output_path += "_codeprompt"
     if not type_hint:

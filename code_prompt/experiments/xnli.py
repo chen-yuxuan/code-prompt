@@ -19,7 +19,7 @@ from ..models.codellm import (
     code_complete,
 )
 from ..models.llm import get_client, get_response
-from ..utils import clean_vllm_memory
+from ..utils import clean_vllm_memory, few_shot_per_class
 
 
 def run_xnli(
@@ -27,7 +27,7 @@ def run_xnli(
     language: str = "en",
     enforce_code_prompt: bool = False,
     shots: int = 0,
-    seed: int = 42,
+    seed: int = 0,
     type_hint: bool = True,
 ):
     logging.basicConfig(level=logging.INFO)
@@ -36,7 +36,9 @@ def run_xnli(
     testset = load_dataset("facebook/xnli", language, split="test")
     if shots > 0:
         trainset = load_dataset("facebook/xnli", language, split="train")
-        few_shot_examples = trainset.shuffle(seed=seed).select(range(shots))
+        few_shot_examples = few_shot_per_class(
+            trainset, k=shots, seed=seed, label_column_name="label"
+        )
     else:
         few_shot_examples = None
 
@@ -146,7 +148,10 @@ def run_xnli(
 
     model = clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
-    output_path = f"./outputs/xnli_{language}_{_model_name}_{shots}_shot"
+    if shots == 0:
+        output_path = f"./outputs/xnli_{language}_{_model_name}_{shots}_shot"
+    else:
+        output_path = f"./outputs/xnli_{language}_{_model_name}_{shots}_shot_seed_{seed}"
     if enforce_code_prompt:
         output_path += "_codeprompt"
     if not type_hint:

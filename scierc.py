@@ -42,7 +42,7 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument("--seed", type=int, default=42, help="The random seed.")
 parser.add_argument(
-    "--shots", type=int, default=0, help="Number of few-shot examples. 0 for zero-shot."
+    "--shots", type=int, default=2, help="Number of few-shot examples. 0 for zero-shot."
 )
 parser.add_argument(
     "--model",
@@ -67,18 +67,22 @@ logging.basicConfig(level=logging.INFO)
 
 seed_everything(args.seed)
 models = MODELS if args.model is None else [args.model]
+runs = 3 if args.shots > 0 else 1
+shots = 8 if args.shots > 8 else args.shots
 for model in models:
     logging.info(f"Running experiment with model {model}")
     # try and if fails, print error and continue
-    try:
-        run_scierc(
-            model,
-            enforce_code_prompt=args.enforce_code_prompt,
-            shots=args.shots,
-            seed=args.seed,
-            type_hint=args.type_hint,
-        )
-    except Exception as e:
-        logging.error(f"Experiment with model {model} failed with error: {e}")
-        continue
+    for run in range(runs):
+        logging.info(f"Run {run+1}/{runs} with {shots} shots")
+        try:
+            run_scierc(
+                model,
+                enforce_code_prompt=args.enforce_code_prompt,
+                shots=shots,
+                seed=run,
+                type_hint=args.type_hint,
+            )
+        except Exception as e:
+            logging.error(f"Experiment with model {model} failed with error: {e}")
+            continue
     logging.info(f"Experiment with model {model} completed successfully.")
