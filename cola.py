@@ -1,8 +1,11 @@
 import argparse
 import logging
 
+from huggingface_hub import login
+
 from code_prompt.experiments.cola import run_cola
 from code_prompt.utils import seed_everything
+from code_prompt.settings import HF_TOKEN
 
 MODELS = [
     "Qwen/Qwen3-Coder-30B-A3B-Instruct",
@@ -63,6 +66,7 @@ parser.add_argument(
 args = parser.parse_args()
 logging.basicConfig(level=logging.INFO)
 logging.info(args)
+login(token=HF_TOKEN)
 
 
 seed_everything(args.seed)

@@ -1,8 +1,12 @@
 import argparse
 import logging
 
+from huggingface_hub import login
+
 from code_prompt.experiments.xnli import run_xnli
 from code_prompt.utils import seed_everything
+from code_prompt.settings import HF_TOKEN
+
 
 MODELS = []
 
@@ -17,8 +21,6 @@ ALL_MODELS = [
     "Qwen/Qwen2.5-7B-Instruct",
     "Qwen/Qwen2.5-Coder-3B",
     "Qwen/Qwen2.5-3B-Instruct",
-    "deepseek-ai/DeepSeek-Coder-V2-Lite-Base",
-    "deepseek-ai/DeepSeek-V2-Lite",
     "google/codegemma-7b",
     "google/gemma-7b",
     "google/codegemma-2b",
@@ -66,6 +68,7 @@ parser.add_argument(
 args = parser.parse_args()
 logging.basicConfig(level=logging.INFO)
 logging.info(f"Arguments: {args}")
+login(token=HF_TOKEN)
 
 seed_everything(args.seed)
 models = MODELS if args.model is None else [args.model]

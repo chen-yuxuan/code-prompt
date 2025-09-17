@@ -2,7 +2,6 @@ import json
 import logging
 
 from datasets import load_dataset
-from huggingface_hub import login
 from tqdm import tqdm
 from transformers import (
     AutoTokenizer,
@@ -12,7 +11,6 @@ from transformers import (
 import torch
 
 from ..prompts.sst import get_nl_prompt, get_code_prompt
-from ..settings import HF_TOKEN
 from ..models.codellm import (
     code_complete_gemma,
     code_complete_qwen,
@@ -30,7 +28,6 @@ def run_sst(
     type_hint: bool = True,
 ):
     logging.basicConfig(level=logging.INFO)
-    login(token=HF_TOKEN)
 
     testset = load_dataset("stanfordnlp/sst2", split="validation")
     if shots > 0:

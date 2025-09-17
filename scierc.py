@@ -1,8 +1,11 @@
 import argparse
 import logging
 
+from huggingface_hub import login
+
 from code_prompt.experiments.scierc import run_scierc
 from code_prompt.utils import seed_everything
+from code_prompt.settings import HF_TOKEN
 
 MODELS = [
     "Qwen/Qwen3-Coder-30B-A3B-Instruct",
@@ -63,7 +66,8 @@ parser.add_argument(
 )
 args = parser.parse_args()
 logging.basicConfig(level=logging.INFO)
-
+logging.info(f"Arguments: {args}")
+login(token=HF_TOKEN)
 
 seed_everything(args.seed)
 models = MODELS if args.model is None else [args.model]

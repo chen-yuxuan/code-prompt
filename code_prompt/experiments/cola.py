@@ -2,7 +2,6 @@ import json
 import logging
 
 from datasets import load_dataset
-from huggingface_hub import login
 from tqdm import tqdm
 from transformers import (
     AutoTokenizer,
@@ -30,7 +29,6 @@ def run_cola(
     type_hint: bool = True,
 ):
     logging.basicConfig(level=logging.INFO)
-    login(token=HF_TOKEN)
 
     testset = load_dataset("nyu-mll/glue", "cola", split="validation")
     if shots > 0:
