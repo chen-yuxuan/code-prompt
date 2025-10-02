@@ -6,18 +6,11 @@ from huggingface_hub import login
 from code_prompt.experiments import (
     run_agnews,
     run_cola,
-    run_iris,
-    run_mrpc,
-    run_mscinli,
-    run_scierc,
-    run_semeval,
-    run_sst,
-    run_xnli,
 )
 from code_prompt.utils import seed_everything
 from code_prompt.settings import HF_TOKEN
 
-MODEL = "meta-llama/Llama-3.1-8B-Instruct"
+MODELS = ["gpt-3.5-turbo-instruct"]
 
 parser = argparse.ArgumentParser(
     description="Collect arguments for experimenting with SciERC dataset."
@@ -38,19 +31,14 @@ logging.info(f"Arguments: {args}")
 login(token=HF_TOKEN)
 
 seed_everything(args.seed)
-models = MODEL if args.model is None else args.model
+models = MODELS if args.model is None else args.model
+if isinstance(models, str):
+    models = [models]
 runs = 3 if args.shots > 0 else 1
 
 # run each dataset
 for experiment in [
     run_agnews,
-    run_cola,
-    run_iris,
-    run_mrpc,
-    run_mscinli,
-    run_semeval,
-    run_sst,
-    run_xnli,
 ]:
     logging.info(f"Running experiment {experiment.__name__}")
     for model in models:
@@ -61,6 +49,7 @@ for experiment in [
             try:
                 experiment(
                     model,
+                    enforce_code_prompt=True,
                     shots=args.shots,
                     seed=run,
                 )

@@ -58,4 +58,6 @@ def few_shot_per_class(dataset, k=1, seed=0, label_column_name="label"):
             )
         sampled_indices.extend(rng.sample(indices, k=k))
 
+    if isinstance(dataset, list):
+        return [dataset[i] for i in sampled_indices]
     return dataset.select(sampled_indices)

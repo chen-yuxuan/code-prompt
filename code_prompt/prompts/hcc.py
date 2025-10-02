@@ -21,7 +21,8 @@ CODE_PROMPT = (
     "       - text (str): The input text of the HCC patient containing tumor sizes.\n\n"
     "   Returns:\n"
     '       bool: True if the patient meets Milan criteria, else False.\n\n'
-    '   """\npass\n\n'
+    '   """\n'
+    '   pass\n\n'
     "{few_shot_examples}"
     "# Test case for inference\n"
     'text = "The tumor sizes of the HCC patient: {text}"\n'
@@ -46,7 +47,7 @@ def get_nl_prompt(example: str, few_shot_examples: list[dict] = None) -> str:
     else:
         few_shot_str = ""
     return NL_PROMPT.format(
-        example["TSIZE"].replace("\n", ", "),
+        text=example["TSIZE"].replace("\n", ", "),
         few_shot_examples=few_shot_str
     )
 

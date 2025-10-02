@@ -10,6 +10,7 @@ NL_PROMPT = (
 )
 NL_SHOT_PROMPT = "\nInput:\n{text}\nOutput: {label}\n"
 
+# typing: -> Literal["positive", "negative"]
 CODE_PROMPT = (
     "def classify_topic(text: str){typing}:\n"
     '   """Classify the given text (title + description of news) into one of the following topics:\n'

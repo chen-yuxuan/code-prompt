@@ -69,6 +69,10 @@ ALL_LABELS = {
         0: "not_equivalent",
         1: "equivalent",
     },
+    "hcc": {
+        True: "True",
+        False: "False",
+    },
 }
 
 ALL_LABEL_COLUMN_NAMES = {
@@ -81,6 +85,7 @@ ALL_LABEL_COLUMN_NAMES = {
     "xnli": "label",
     "mscinli": "label",
     "mrpc": "label",
+    "hcc": "label",
 }
 
 
@@ -109,12 +114,10 @@ def response_to_label(
     return first_match
 
 
-def redundancy_score(response: str, pred: str | int) -> float:
+def redundancy_score(response: str, pred: str | int) -> float | None:
     """Calculate the redundancy score of the prediction in the response.
-    The redundancy score is defined as the length of the prediction divided by the length of the response.
+    Defined as REDUNDANCY := 1 - len(pred_label)/len(response)
     """
-    if pred is None:
-        return 0.0
     # clean response
     response = (
         response.lower().strip().replace("\n", " ").replace('"', "").replace("'", "")
@@ -123,10 +126,15 @@ def redundancy_score(response: str, pred: str | int) -> float:
     response = response.replace("<eos>", "").replace("<|file_separator|>", "")
     # markdown code blocks
     response = response.replace("```python", "").replace("```", "")
+    
+    if pred is None:
+        if len(response) == 0:
+            return None
+        return 1
 
-    pred_str = str(pred).lower().strip()
+    pred_str = str(pred).lower()
     if len(response) == 0:
-        return 0.0
+        return None
     return 1 - len(pred_str) / len(response)
 
 
@@ -237,7 +245,9 @@ def evaluate_results(file_path: str) -> list[dict]:
     # compute overall accuracy and average redundancy
     total = len(examples)
     correct = sum(e["correct"] for e in examples)
-    avg_redundancy = sum(e["redundancy"] for e in examples) / total if total > 0 else 0.0
+    # compute average redundancy, ignoring None values
+    redundancies = [e["redundancy"] for e in examples if e["redundancy"] is not None]
+    avg_redundancy = sum(redundancies) / len(redundancies) if redundancies else 0.0
     accuracy = correct / total if total > 0 else 0.0
 
     report = {
