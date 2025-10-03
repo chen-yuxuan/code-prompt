@@ -1,7 +1,7 @@
 NL_PROMPT = (
     "You are an annotator to stage a patient according to Milan-criteria "
     "given their tumor size(s). Your task is to read the following text "
-    "about an HCC patient containing a list of tumor sizes and classify "
+    "about an HCC patient containing a list of tumor size(s) and classify "
     "the patient into either True or False based on the rule of Milan criteria.\n"
     "Milan criteria: one tumor <= 5 cm or up to 3 tumors each <= 3 cm.\n"
     "If within the criteria, label True, else False. "
@@ -11,27 +11,27 @@ NL_PROMPT = (
     "\nInput: The tumor sizes of the HCC patient: {text}"
     "\nOutput: "
 )
-NL_SHOT_PROMPT = "\nInput: The tumor sizes of the HCC patient: {text}\nOutput: {label}\n"
+NL_SHOT_PROMPT = "\nInput: The tumor size(s) of the HCC patient: {text}\nOutput: {label}\n"
 
 CODE_PROMPT = (
     "def HCC_staging(text: str){typing}:\n"
-    '   """Classify the patient according to Milan criteria based on tumor sizes in the text.\n'
+    '   """Classify the patient according to Milan criteria based on tumor size(s) in the text.\n'
     "   Milan criteria: one tumor <= 5 cm or up to 3 tumors each ≤ 3 cm.\n"
     "   Args:\n"
-    "       - text (str): The input text of the HCC patient containing tumor sizes.\n\n"
+    "       - text (str): The input text of the HCC patient containing tumor size(s).\n"
     "   Returns:\n"
     '       bool: True if the patient meets Milan criteria, else False.\n\n'
     '   """\n'
     '   pass\n\n'
     "{few_shot_examples}"
     "# Test case for inference\n"
-    'text = "The tumor sizes of the HCC patient: {text}"\n'
+    'text = "The tumor size(s) of the HCC patient: {text}"\n'
     'assert (HCC_staging(text) == '
 )
 CODE_SHOT_PROMPT = (
     "\n# Example test case"
-    '\ntext = "The tumor sizes of the HCC patient: {text}"'
-    '\nassert (classify_sentiment(text) == "{label}")\n'
+    '\ntext = "The tumor size(s) of the HCC patient: {text}"'
+    '\nassert (HCC_staging(text) == "{label}")\n'
 )
 
 
@@ -39,10 +39,10 @@ def get_nl_prompt(example: str, few_shot_examples: list[dict] = None) -> str:
     """Get the natural language prompt."""
     if few_shot_examples:
         few_shot_str = ""
-        for example in few_shot_examples:
+        for e in few_shot_examples:
             few_shot_str += NL_SHOT_PROMPT.format(
-                text=example["TSIZE"].replace("\n", ", "),
-                label=str(example["label"])
+                text=e["TSIZE"].replace("\n", ", "),
+                label=str(e["label"])
             )
     else:
         few_shot_str = ""
@@ -62,10 +62,10 @@ def get_code_prompt(
     _TYPING = ' -> bool'
     if few_shot_examples:
         few_shot_str = ""
-        for example in few_shot_examples:
+        for e in few_shot_examples:
             few_shot_str += CODE_SHOT_PROMPT.format(
-                text=example["TSIZE"].replace("\n", ", "),
-                label=str(example["label"])
+                text=e["TSIZE"].replace("\n", ", "),
+                label=str(e["label"])
             )
     else:
         few_shot_str = ""

@@ -26,6 +26,7 @@ def run_sst(
     shots: int = 0,
     seed: int = 0,
     type_hint: bool = True,
+    language: str = "python",
 ):
     logging.basicConfig(level=logging.INFO)
 
@@ -78,6 +79,7 @@ def run_sst(
                 few_shot_examples=few_shot_examples,
                 type_hint=type_hint,
                 model=model_name,
+                language=language,
             )
             if "gemma" in model_name.lower():
                 response = code_complete_gemma(
@@ -118,6 +120,7 @@ def run_sst(
                     few_shot_examples=few_shot_examples,
                     type_hint=type_hint,
                     model=model_name,
+                    language=language,
                 )
                 response = get_response(
                     prompt,
@@ -147,7 +150,9 @@ def run_sst(
         output_path = f"./outputs/sst2_{_model_name}_{shots}_shot"
     else:
         output_path = f"./outputs/sst2_{_model_name}_{shots}_shot_seed_{seed}"
-    if enforce_code_prompt == True:
+    if language.lower() not in "python":
+        output_path += f"_{language.lower()}"
+    if enforce_code_prompt == True and "code" not in model_name.lower():
         output_path += "_codeprompt"
     if not type_hint:
         output_path += "-notype"

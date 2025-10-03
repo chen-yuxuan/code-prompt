@@ -63,13 +63,13 @@ def get_nl_prompt(example: dict, few_shot_examples: list[dict] = None) -> str:
     """Get the natural language prompt."""
     if few_shot_examples:
         few_shot_str = ""
-        for example in few_shot_examples:
+        for e in few_shot_examples:
             few_shot_str += NL_SHOT_PROMPT.format(
-                sepal_length=example["SepalLengthCm"],
-                sepal_width=example["SepalWidthCm"],
-                petal_length=example["PetalLengthCm"],
-                petal_width=example["PetalWidthCm"],
-                label=relabel_iris(example),
+                sepal_length=e["SepalLengthCm"],
+                sepal_width=e["SepalWidthCm"],
+                petal_length=e["PetalLengthCm"],
+                petal_width=e["PetalWidthCm"],
+                label=relabel_iris(e),
             )
     else:
         few_shot_str = ""
@@ -92,13 +92,13 @@ def get_code_prompt(
     _TYPING = ' -> Literal["setosa", "versicolor", "virginica"]'
     if few_shot_examples:
         few_shot_str = ""
-        for example in few_shot_examples:
+        for e in few_shot_examples:
             few_shot_str += CODE_SHOT_PROMPT.format(
-                sepal_length=example["SepalLengthCm"],
-                sepal_width=example["SepalWidthCm"],
-                petal_length=example["PetalLengthCm"],
-                petal_width=example["PetalWidthCm"],
-                label=relabel_iris(example),
+                sepal_length=e["SepalLengthCm"],
+                sepal_width=e["SepalWidthCm"],
+                petal_length=e["PetalLengthCm"],
+                petal_width=e["PetalWidthCm"],
+                label=relabel_iris(e),
             )
     else:
         few_shot_str = ""

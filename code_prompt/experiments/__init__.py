@@ -7,6 +7,7 @@ from .scierc import run_scierc
 from .semeval import run_semeval
 from .sst import run_sst
 from .xnli import run_xnli
+from .hcc import run_hcc
 
 __all__ = [
     "run_agnews",
@@ -18,4 +19,5 @@ __all__ = [
     "run_semeval",
     "run_sst",
     "run_xnli",
+    "run_hcc",
 ]

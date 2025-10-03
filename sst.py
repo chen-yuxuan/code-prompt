@@ -65,6 +65,12 @@ parser.add_argument(
     default=True,
     help="Include type hints (default: True)",
 )
+parser.add_argument(
+    "--language",
+    type=str,
+    default="python",
+    help="The programming language for code prompts (default: python). Options: python, javascript, cpp",
+)
 args = parser.parse_args()
 logging.basicConfig(level=logging.INFO)
 logging.info(f"Arguments: {args}")
@@ -86,6 +92,7 @@ for model in models:
                 shots=args.shots,
                 seed=run,
                 type_hint=args.type_hint,
+                language=args.language,
             )
         except Exception as e:
             logging.error(f"Experiment with model {model} failed with error: {e}")

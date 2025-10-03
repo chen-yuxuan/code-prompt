@@ -55,11 +55,11 @@ def get_nl_prompt(example: dict, few_shot_examples: list[dict] = None) -> str:
     """Get the natural language prompt."""
     if few_shot_examples:
         few_shot_str = ""
-        for example in few_shot_examples:
+        for e in few_shot_examples:
             few_shot_str += NL_SHOT_PROMPT.format(
-                sentence1=example["sentence1"],
-                sentence2=example["sentence2"],
-                label=example["label"],
+                sentence1=e["sentence1"],
+                sentence2=e["sentence2"],
+                label=e["label"],
             )
     else:
         few_shot_str = ""
@@ -84,11 +84,11 @@ def get_code_prompt(
     )
     if few_shot_examples:
         few_shot_str = ""
-        for example in few_shot_examples:
+        for e in few_shot_examples:
             few_shot_str += CODE_SHOT_PROMPT.format(
-                sentence1=example["sentence1"],
-                sentence2=example["sentence2"],
-                label=example["label"],
+                sentence1=e["sentence1"],
+                sentence2=e["sentence2"],
+                label=e["label"],
             )
     else:
         few_shot_str = ""

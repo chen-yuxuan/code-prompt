@@ -84,12 +84,12 @@ def get_nl_prompt(example: dict, few_shot_examples: list[dict] = None) -> str:
     """Get the natural language prompt."""
     if few_shot_examples:
         few_shot_str = ""
-        for example in few_shot_examples:
+        for e in few_shot_examples:
             few_shot_str += NL_SHOT_PROMPT.format(
-                text=tokens_to_text(example),
-                subj=get_subj_text(example),
-                obj=get_obj_text(example),
-                label=get_relation_without_order(example),
+                text=tokens_to_text(e),
+                subj=get_subj_text(e),
+                obj=get_obj_text(e),
+                label=get_relation_without_order(e),
             )
     else:
         few_shot_str = ""
@@ -117,12 +117,12 @@ def get_code_prompt(
     )
     if few_shot_examples:
         few_shot_str = ""
-        for example in few_shot_examples:
+        for e in few_shot_examples:
             few_shot_str += CODE_SHOT_PROMPT.format(
-                text=tokens_to_text(example),
-                subj=get_subj_text(example),
-                obj=get_obj_text(example),
-                label=get_relation_without_order(example),
+                text=tokens_to_text(e),
+                subj=get_subj_text(e),
+                obj=get_obj_text(e),
+                label=get_relation_without_order(e),
             )
     else:
         few_shot_str = ""
