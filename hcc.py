@@ -79,6 +79,12 @@ parser.add_argument(
     default=True,
     help="Include type hints (default: True)",
 )
+parser.add_argument(
+    "--implement",
+    type=lambda x: x.lower() == "true",
+    default=False,
+    help="Implement the function body (default: False)",
+)
 args = parser.parse_args()
 logging.basicConfig(level=logging.INFO)
 logging.info(f"Arguments: {args}")
@@ -101,6 +107,7 @@ for model in models:
                 shots=shots,
                 seed=run,
                 type_hint=args.type_hint,
+                implement=args.implement,
             )
         except Exception as e:
             logging.error(f"HCC-Experiment with model {model} failed with error: {e}")

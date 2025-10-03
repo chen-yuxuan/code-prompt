@@ -27,6 +27,7 @@ def run_hcc(
     shots: int = 0,
     seed: int = 0,
     type_hint: bool = True,
+    implement: bool = False,
 ):
     logging.basicConfig(level=logging.INFO)
     # read json as list of dict, so testset
@@ -77,6 +78,7 @@ def run_hcc(
                 example=example,
                 few_shot_examples=few_shot_examples,
                 type_hint=type_hint,
+                implement=implement,
                 model=model_name,
             )
             if "gemma" in model_name.lower():
@@ -117,6 +119,7 @@ def run_hcc(
                     example=example,
                     few_shot_examples=few_shot_examples,
                     type_hint=type_hint,
+                    implement=implement,
                     model=model_name,
                 )
                 response = get_response(
@@ -152,6 +155,8 @@ def run_hcc(
         output_path += "_codeprompt"
     if not type_hint:
         output_path += "-notype"
+    if implement:
+        output_path += "-implemented"
     output_path += ".json"
     with open(output_path, "w") as f:
         json.dump(examples, f, indent=4, ensure_ascii=True)

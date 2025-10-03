@@ -224,7 +224,18 @@ def get_seed(file_name: str) -> int | None:
     return int(file_name[idx + 5 : idx + 6])
 
 
-def evaluate_results(file_path: str) -> list[dict]:
+def get_language(file_name: str) -> str:
+    # programming language for code prompts
+    if "code" not in file_name.lower():
+        return "nl"
+    if "js" in file_name.lower() or "javascript" in file_name.lower():
+        return "js"
+    elif "cpp" in file_name.lower():
+        return "cpp"
+    return "python"
+
+
+def evaluate_results_zero_shot(file_path: str) -> list[dict]:
     """Evaluate a list of result dictionaries from a JSONL file.
     Each dictionary should contain 'response' and 'label' keys.
     Returns a list of evaluated result dictionaries.
@@ -256,6 +267,7 @@ def evaluate_results(file_path: str) -> list[dict]:
         "model": get_model(file_name),
         "shot": get_shot(file_name),
         "seed": get_seed(file_name),
+        "language": get_language(file_name),
         "total": total,
         "correct": correct,
         "accuracy": accuracy,
