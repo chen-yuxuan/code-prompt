@@ -33,8 +33,9 @@ MODELS = [
 def create_excel(
     dataset: str="agnews",
     score: str="accuracy",
+    scenario: str="zeroshot",
 ):
-    read_path = f"eval/zeroshot-{dataset}-evaluation.json"
+    read_path = f"eval/{scenario}-{dataset}-evaluation.json"
     # load json
     with open(read_path, "r") as f:
         data = json.load(f)
@@ -51,4 +52,4 @@ def create_excel(
                 break
     # save as excel
     df = pd.DataFrame(results)
-    df.to_excel(f"eval/zeroshot-{dataset}-{score}.xlsx", index=False)
+    df.to_excel(f"eval/{scenario}-{dataset}-{score}.xlsx", index=False)

@@ -2,6 +2,7 @@ import json
 import os
 
 from sklearn.metrics import matthews_corrcoef, f1_score
+from numpy import std, mean
 
 
 ALL_LABELS = {
@@ -218,24 +219,30 @@ def get_shot(file_name: str) -> int:
 def get_seed(file_name: str) -> int | None:
     # example: outputs/sst2_gpt-35-turbo-instruct_4_shot_seed_1_codeprompt.json
     # return: 1
-    if "_seed" not in file_name:
+    parts = file_name.split("_")
+    if "seed" not in parts:
         return None
-    idx = file_name.index("_seed")
-    return int(file_name[idx + 5 : idx + 6])
+    seed_idx = parts.index("seed")
+    if seed_idx + 1 >= len(parts):
+        return None
+    try:
+        return int(parts[seed_idx + 1])
+    except ValueError:
+        return None
 
 
 def get_language(file_name: str) -> str:
     # programming language for code prompts
     if "code" not in file_name.lower():
         return "nl"
-    if "js" in file_name.lower() or "javascript" in file_name.lower():
+    if "_js" in file_name.lower() or "javascript" in file_name.lower():
         return "js"
     elif "cpp" in file_name.lower():
         return "cpp"
     return "python"
 
 
-def evaluate_results_zero_shot(file_path: str) -> list[dict]:
+def evaluate_results(file_path: str) -> list[dict]:
     """Evaluate a list of result dictionaries from a JSONL file.
     Each dictionary should contain 'response' and 'label' keys.
     Returns a list of evaluated result dictionaries.
@@ -291,7 +298,7 @@ def evaluate_results_zero_shot(file_path: str) -> list[dict]:
     return report
 
 
-def evaluate_directory(dir_path: str) -> list[dict]:
+def evaluate_directory_zero_shot(dir_path: str) -> list[dict]:
     """Enumerate all JSON files in the directory and evaluate them.
     Returns a list of evaluation reports for each file.
     """
@@ -304,3 +311,89 @@ def evaluate_directory(dir_path: str) -> list[dict]:
     # order by filename
     reports = sorted(reports, key=lambda x: x["filename"])
     return reports
+
+
+def evaluate_directory_few_shot(dir_path: str) -> list[dict]:
+    """Enumerate all JSON files in the directory and evaluate them.
+    Returns a list of evaluation reports for each file.
+    """
+    reports = []
+    for file_name in os.listdir(dir_path):
+        if file_name.endswith(".json") or file_name.endswith(".jsonl"):
+            file_path = os.path.join(dir_path, file_name)
+            report = evaluate_results(file_path)
+            reports.append(report)
+    # order by filename
+    reports = sorted(reports, key=lambda x: x["filename"])
+    # now reports is a list of dicts, please merge them by filename without seed
+    # for example "mrpc_CodeLlama-13b-Python-hf_4_shot_seed_1.json" and "mrpc_CodeLlama-13b-Python-hf_4_shot_seed_2.json"
+    # and "mrpc_CodeLlama-13b-Python-hf_4_shot_seed_3.json" should be merged into one element
+    # the new element should have the average accuracy and average redundancy as well as stddev of accuracy and redundancy
+    # also the number of seeds
+    merged_reports = {}
+    for report in reports:
+        filename = report["filename"]
+        # remove seed part
+        if "_seed_" in filename:
+            base_filename = filename[: filename.index("_seed_")]
+        else:
+            base_filename = filename
+        if base_filename not in merged_reports:
+            merged_reports[base_filename] = {
+                "filename": base_filename,
+                "dataset": report["dataset"],
+                "model": report["model"],
+                "shot": report["shot"],
+                "language": report["language"],
+                "total": 0,
+                "correct": 0,
+                "accuracy": [],
+                "redundancy": [],
+                "num_seeds": 0,
+            }
+            if "matthews_corrcoef" in report:
+                merged_reports[base_filename]["matthews_corrcoef"] = []
+            if "f1_micro" in report:
+                merged_reports[base_filename]["f1_micro"] = []
+            if "f1_macro" in report:
+                merged_reports[base_filename]["f1_macro"] = []
+
+        merged = merged_reports[base_filename]
+        merged["total"] = report["total"]
+        merged["accuracy"].append(report["accuracy"])
+        merged["redundancy"].append(report["avg_redundancy"])
+        merged["num_seeds"] += 1
+        if "matthews_corrcoef" in report:
+            merged["matthews_corrcoef"].append(report["matthews_corrcoef"])
+        if "f1_micro" in report:
+            merged["f1_micro"].append(report["f1_micro"])
+        if "f1_macro" in report:
+            merged["f1_macro"].append(report["f1_macro"])
+    
+    # compute mean and stddev for accuracy and redundancy, and if applicable, matthews_corrcoef, f1_micro, f1_macro
+    final_reports = []
+    for base_filename, merged in merged_reports.items():
+        num_seeds = merged.pop("num_seeds")
+        accuracies = merged.pop("accuracy")
+        redundancies = merged.pop("redundancy")
+        merged["num_seeds"] = num_seeds
+        merged["accuracy"] = mean(accuracies) if accuracies else 0.0
+        merged["stddev_accuracy"] = std(accuracies) if accuracies else 0.0
+        merged["redundancy"] = mean(redundancies) if redundancies else 0.0
+        merged["stddev_redundancy"] = std(redundancies) if redundancies else 0.0
+        if "matthews_corrcoef" in merged:
+            mccs = merged.pop("matthews_corrcoef")
+            merged["matthews_corrcoef"] = mean(mccs) if mccs else 0.0
+            merged["stddev_matthews_corrcoef"] = std(mccs) if mccs else 0.0
+        if "f1_micro" in merged:
+            f1s = merged.pop("f1_micro")
+            merged["f1_micro"] = mean(f1s) if f1s else 0.0
+            merged["stddev_f1_micro"] = std(f1s) if f1s else 0.0
+        if "f1_macro" in merged:
+            f1s = merged.pop("f1_macro")
+            merged["f1_macro"] = mean(f1s) if f1s else 0.0
+            merged["stddev_f1_macro"] = std(f1s) if f1s else 0.0
+        final_reports.append(merged)
+    # order by filename
+    final_reports = sorted(final_reports, key=lambda x: x["filename"])
+    return final_reports
