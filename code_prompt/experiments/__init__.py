@@ -1,6 +1,6 @@
 from .agnews import run_agnews
 from .cola import run_cola
-from . iris import run_iris
+from .iris import run_iris
 from .mrpc import run_mrpc
 from .mscinli import run_mscinli
 from .scierc import run_scierc

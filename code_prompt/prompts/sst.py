@@ -33,10 +33,10 @@ CODE_PROMPT_JS = (
     "const assert = require('assert');\n\n"
     "function classifySentiment(text) {{\n"
     "    /*\n"
-    '    Classify the sentiment of the given text as either positive or negative.\n'
-    '    Args:\n'
-    '        - text (string): The text to classify.\n'
-    '    Returns:\n'
+    "    Classify the sentiment of the given text as either positive or negative.\n"
+    "    Args:\n"
+    "        - text (string): The text to classify.\n"
+    "    Returns:\n"
     '        "positive" | "negative": The sentiment label of the text.\n'
     "    */\n"
     "    // TODO: Implement classification logic\n"
@@ -57,10 +57,10 @@ CODE_PROMPT_CPP = (
     "#include <string>\n\n"
     "std::string classify_sentiment(const std::string& text) {{\n"
     "    /*\n"
-    '    Classify the sentiment of the given text as either positive or negative.\n'
-    '    Args:\n'
-    '        - text (std::string): The text to classify.\n'
-    '    Returns:\n'
+    "    Classify the sentiment of the given text as either positive or negative.\n"
+    "    Args:\n"
+    "        - text (std::string): The text to classify.\n"
+    "    Returns:\n"
     '        "positive" or "negative": The sentiment label of the text.\n'
     "    */\n"
     "    // TODO: Implement classification logic\n"

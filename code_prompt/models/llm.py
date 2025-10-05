@@ -29,7 +29,9 @@ def get_client(
         if not api_key:
             api_key = "sk-79006f408908450b987eccd55c4e91e4"
         base_url = (
-            "https://api.deepseek.com/v3.1_terminus_expires_on_20251015" if not beta else "https://api.deepseek.com/beta"
+            "https://api.deepseek.com/v3.1_terminus_expires_on_20251015"
+            if not beta
+            else "https://api.deepseek.com/beta"
         )
         return OpenAI(api_key=api_key, base_url=base_url)
     return vllm.LLM(model=model)
@@ -55,7 +57,9 @@ def get_response(
                 max_tokens=max_tokens,
                 temperature=0.0,
             )
-            raise ValueError(f"\nprompt:\n{prompt}\nresponse: {response.choices[0].text.strip()}")
+            raise ValueError(
+                f"\nprompt:\n{prompt}\nresponse: {response.choices[0].text.strip()}"
+            )
             return response.choices[0].text.strip()
         else:
             if "gpt-3.5-turbo-instruct" in model:

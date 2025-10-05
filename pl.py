@@ -21,35 +21,17 @@ ALL_MODELS = [
     "deepseek-v3",
 ]
 
+LANGUAGES = ["js", "cpp"]
+
 parser = argparse.ArgumentParser(
     description="Collect arguments for experimenting 3 programming languages with 4 datasets."
 )
-parser.add_argument("--seed", type=int, default=42, help="The random seed.")
-parser.add_argument(
-    "--shots", type=int, default=4, help="Number of few-shot examples. 0 for zero-shot."
-)
+parser.add_argument("--seed", type=int, default=0, help="The random seed.")
 parser.add_argument(
     "--model",
     type=str,
     default=None,
     help="The model name/identifier.",
-)
-parser.add_argument(
-    "--enforce_code_prompt",
-    action="store_true",
-    help="Enforce code prompt for all models.",
-)
-parser.add_argument(
-    "--type_hint",
-    type=lambda x: x.lower() == "true",
-    default=True,
-    help="Include type hints (default: True)",
-)
-parser.add_argument(
-    "--implement",
-    type=lambda x: x.lower() == "true",
-    default=False,
-    help="Implement the function body (default: False)",
 )
 args = parser.parse_args()
 logging.basicConfig(level=logging.INFO)
@@ -58,24 +40,27 @@ login(token=HF_TOKEN)
 
 seed_everything(args.seed)
 models = MODELS if args.model is None else [args.model]
-runs = 3 if args.shots > 0 else 1
-shots = 16 if args.shots > 16 else args.shots
 
 for model in models:
-    logging.info(f"Running HCCexperiment with model {model}")
-    # try and if fails, print error and continue
-    for run in range(runs):
-        logging.info(f"Run {run+1}/{runs} for model {model}")
-        try:
-            run_hcc(
-                model,
-                enforce_code_prompt=args.enforce_code_prompt,
-                shots=shots,
-                seed=run,
-                type_hint=args.type_hint,
-                implement=args.implement,
-            )
-        except Exception as e:
-            logging.error(f"HCC-Experiment with model {model} failed with error: {e}")
-            continue
-    logging.info(f"HCC Experiment with model {model} completed successfully.")
+    for language in LANGUAGES:
+        for experiment in [run_hcc, run_sst, run_semeval, run_mrpc]:
+            try:
+                logging.info(
+                    f"Running {experiment.__name__} experiment with model {model} and language {language}"
+                )
+                experiment(
+                    model_name=model,
+                    shots=0,
+                    seed=args.seed,
+                    enforce_code_prompt=True,
+                    type_hint=True,
+                    language=language,
+                )
+            except Exception as e:
+                logging.error(
+                    f"{experiment.__name__}-Experiment with model {model} and language {language} failed with error: {e}"
+                )
+        logging.info(
+            f"Finished all experiments for model {model} and language {language}"
+        )
+    logging.info(f"Finished all experiments for model {model}")

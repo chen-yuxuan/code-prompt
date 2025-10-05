@@ -84,4 +84,3 @@ def get_code_prompt(
     if "deepseek-coder" in model.lower() and "v2" in model.lower():
         return "<|fim_begin|>" + prompt + '<|fim_hole|>")\n<|fim_end|>'
     return prompt
-

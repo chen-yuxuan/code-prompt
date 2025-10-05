@@ -61,11 +61,7 @@ def run_xnli_multi(
                 trust_remote_code=True,
             ).eval()
     else:
-        beta = (
-            True
-            if "deepseek-v3" in model_name.lower()
-            else False
-        )
+        beta = True if "deepseek-v3" in model_name.lower() else False
         model = get_client(model_name, beta=beta)
 
     examples = []
@@ -112,18 +108,18 @@ def run_xnli_multi(
 
         else:
             prompt = get_code_prompt(
-                    example=example,
-                    few_shot_examples=few_shot_examples,
-                    type_hint=True,
-                    model=model_name,
-                    lang=lang,
-                )
+                example=example,
+                few_shot_examples=few_shot_examples,
+                type_hint=True,
+                model=model_name,
+                lang=lang,
+            )
             response = get_response(
-                    prompt,
-                    client=model,
-                    model=model_name,
-                    enforce_code_prompt=True,
-                )
+                prompt,
+                client=model,
+                model=model_name,
+                enforce_code_prompt=True,
+            )
         examples.append(
             {
                 "premise": example["premise"],
@@ -139,7 +135,9 @@ def run_xnli_multi(
     if shots == 0:
         output_path = f"./outputs/xnli_multi_{lang}_{_model_name}_{shots}_shot"
     else:
-        output_path = f"./outputs/xnli_multi_{lang}_{_model_name}_{shots}_shot_seed_{seed}"
+        output_path = (
+            f"./outputs/xnli_multi_{lang}_{_model_name}_{shots}_shot_seed_{seed}"
+        )
     output_path += ".json"
     with open(output_path, "w") as f:
         json.dump(examples, f, indent=4, ensure_ascii=True)

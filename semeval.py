@@ -8,10 +8,10 @@ from code_prompt.utils import seed_everything
 from code_prompt.settings import HF_TOKEN
 
 MODELS = [
-    #"Qwen/Qwen3-Coder-30B-A3B-Instruct",
-    #"Qwen/Qwen3-30B-A3B-Instruct-2507",
-    #"Qwen/Qwen2.5-Coder-32B",
-    #"Qwen/Qwen2.5-32B-Instruct",
+    # "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+    # "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    # "Qwen/Qwen2.5-Coder-32B",
+    # "Qwen/Qwen2.5-32B-Instruct",
     "Qwen/Qwen2.5-Coder-14B",
     "Qwen/Qwen2.5-14B-Instruct",
     "Qwen/Qwen2.5-7B-Instruct",
@@ -52,15 +52,18 @@ ALL_MODELS = [
 parser = argparse.ArgumentParser(
     description="Collect arguments for experimenting with SemEval dataset."
 )
-parser.add_argument("--seed", type=int, default=42, help="The random seed.")
+parser.add_argument("--seed", type=int, default=0, help="The random seed.")
 parser.add_argument(
-    "--shots", type=int, default=2, help="Number of few-shot examples. 0 for zero-shot."
+    "--shots", type=int, default=0, help="Number of few-shot examples. 0 for zero-shot."
 )
 parser.add_argument(
     "--model",
     type=str,
     default=None,
     help="The model name/identifier.",
+)
+parser.add_argument(
+    "--language", type=str, default="python", help="The programming language."
 )
 parser.add_argument(
     "--enforce_code_prompt",
@@ -95,6 +98,7 @@ for model in models:
                 shots=shots,
                 seed=run,
                 type_hint=args.type_hint,
+                language=args.language,
             )
         except Exception as e:
             logging.error(f"Experiment with model {model} failed with error: {e}")

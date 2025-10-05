@@ -90,7 +90,6 @@ ALL_LABEL_COLUMN_NAMES = {
 }
 
 
-
 def response_to_label(
     response: str, target_classes: list[str | int]
 ) -> str | int | None:
@@ -127,7 +126,7 @@ def redundancy_score(response: str, pred: str | int) -> float | None:
     response = response.replace("<eos>", "").replace("<|file_separator|>", "")
     # markdown code blocks
     response = response.replace("```python", "").replace("```", "")
-    
+
     if pred is None:
         if len(response) == 0:
             return None
@@ -251,7 +250,7 @@ def evaluate_results(file_path: str) -> list[dict]:
     dataset = get_dataset(file_name)
     target_classes = ALL_LABELS[dataset]
     label_column_name = ALL_LABEL_COLUMN_NAMES[dataset]
-    
+
     examples = []
     with open(file_path, "r") as f:
         results = json.load(f)
@@ -259,7 +258,7 @@ def evaluate_results(file_path: str) -> list[dict]:
     for example in results:
         evaluate_result(example, target_classes, label_column_name)
         examples.append(example)
-    
+
     # compute overall accuracy and average redundancy
     total = len(examples)
     correct = sum(e["correct"] for e in examples)
@@ -288,12 +287,16 @@ def evaluate_results(file_path: str) -> list[dict]:
     elif dataset in ["semeval", "scierc"]:
         y_true = [e["label"] for e in examples]
         y_pred = [e["pred"] if e["pred"] is not None else "Other" for e in examples]
-        f1 = f1_score(y_true, y_pred, average="micro", labels=list(target_classes.values()))
+        f1 = f1_score(
+            y_true, y_pred, average="micro", labels=list(target_classes.values())
+        )
         report["f1_micro"] = f1
     elif dataset in ["mscinli"]:
         y_true = [e["label"] for e in examples]
         y_pred = [e["pred"] if e["pred"] is not None else "neutral" for e in examples]
-        f1 = f1_score(y_true, y_pred, average="macro", labels=list(target_classes.values()))
+        f1 = f1_score(
+            y_true, y_pred, average="macro", labels=list(target_classes.values())
+        )
         report["f1_macro"] = f1
     return report
 
@@ -369,7 +372,7 @@ def evaluate_directory_few_shot(dir_path: str) -> list[dict]:
             merged["f1_micro"].append(report["f1_micro"])
         if "f1_macro" in report:
             merged["f1_macro"].append(report["f1_macro"])
-    
+
     # compute mean and stddev for accuracy and redundancy, and if applicable, matthews_corrcoef, f1_micro, f1_macro
     final_reports = []
     for base_filename, merged in merged_reports.items():

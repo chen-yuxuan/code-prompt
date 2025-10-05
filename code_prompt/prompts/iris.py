@@ -32,7 +32,7 @@ CODE_PROMPT = (
     "   Returns:\n"
     '       Literal["setosa", "versicolor", "virginica"]: The species label of the iris flower.\n'
     '   """\n'
-    '   pass\n\n'
+    "   pass\n\n"
     "{few_shot_examples}"
     "# Test case for inference\n"
     'text = "sepal length: {sepal_length} cm, sepal width: {sepal_width} cm, '

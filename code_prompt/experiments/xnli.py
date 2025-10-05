@@ -148,7 +148,9 @@ def run_xnli(
     if shots == 0:
         output_path = f"./outputs/xnli_{language}_{_model_name}_{shots}_shot"
     else:
-        output_path = f"./outputs/xnli_{language}_{_model_name}_{shots}_shot_seed_{seed}"
+        output_path = (
+            f"./outputs/xnli_{language}_{_model_name}_{shots}_shot_seed_{seed}"
+        )
     if enforce_code_prompt:
         output_path += "_codeprompt"
     if not type_hint:

@@ -27,6 +27,7 @@ def run_mrpc(
     shots: int = 0,
     seed: int = 0,
     type_hint: bool = True,
+    language: str = "python",
 ):
     logging.basicConfig(level=logging.INFO)
 
@@ -78,6 +79,7 @@ def run_mrpc(
                 few_shot_examples=few_shot_examples,
                 type_hint=type_hint,
                 model=model_name,
+                language=language,
             )
             if "gemma" in model_name.lower():
                 response = code_complete_gemma(
@@ -118,6 +120,7 @@ def run_mrpc(
                     few_shot_examples=few_shot_examples,
                     type_hint=type_hint,
                     model=model_name,
+                    language=language,
                 )
                 response = get_response(
                     prompt,
@@ -146,10 +149,11 @@ def run_mrpc(
 
     model = clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
-    if shots == 0:
-        output_path = f"./outputs/mrpc_{_model_name}_{shots}_shot"
-    else:
-        output_path = f"./outputs/mrpc_{_model_name}_{shots}_shot_seed_{seed}"
+    output_path = f"./outputs/mrpc_{_model_name}_{shots}_shot"
+    if language.lower() not in "python":
+        output_path += f"_{language.lower()}"
+    if shots > 0:
+        output_path += f"_seed_{seed}"
     if enforce_code_prompt:
         output_path += "_codeprompt"
     if not type_hint:

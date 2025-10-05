@@ -38,15 +38,21 @@ ALL_MODELS = [
 parser = argparse.ArgumentParser(
     description="Collect arguments for experimenting with MRPC dataset."
 )
-parser.add_argument("--seed", type=int, default=42, help="The random seed.")
+parser.add_argument("--seed", type=int, default=0, help="The random seed.")
 parser.add_argument(
-    "--shots", type=int, default=4, help="Number of few-shot examples. 0 for zero-shot."
+    "--shots", type=int, default=0, help="Number of few-shot examples. 0 for zero-shot."
 )
 parser.add_argument(
     "--model",
     type=str,
     default=None,
     help="The model name/identifier.",
+)
+parser.add_argument(
+    "--language",
+    type=str,
+    default="python",
+    help="The programming language for code prompts (default: python).",
 )
 parser.add_argument(
     "--enforce_code_prompt",
@@ -80,6 +86,7 @@ for model in models:
                 shots=shots,
                 seed=run,
                 type_hint=args.type_hint,
+                language=args.language,
             )
         except Exception as e:
             logging.error(f"MRPC-Experiment with model {model} failed with error: {e}")

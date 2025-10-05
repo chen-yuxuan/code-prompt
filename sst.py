@@ -44,7 +44,7 @@ ALL_MODELS = [
 parser = argparse.ArgumentParser(
     description="Collect arguments for experimenting with SST-2 dataset."
 )
-parser.add_argument("--seed", type=int, default=42, help="The random seed.")
+parser.add_argument("--seed", type=int, default=0, help="The random seed.")
 parser.add_argument(
     "--shots", type=int, default=0, help="Number of few-shot examples. 0 for zero-shot."
 )

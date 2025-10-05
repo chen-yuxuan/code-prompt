@@ -17,9 +17,7 @@ from code_prompt.settings import HF_TOKEN
 
 MODELS = ["gpt-3.5-turbo-instruct"]
 
-parser = argparse.ArgumentParser(
-    description="Collect arguments for experimenting."
-)
+parser = argparse.ArgumentParser(description="Collect arguments for experimenting.")
 parser.add_argument("--seed", type=int, default=0, help="The random seed.")
 parser.add_argument(
     "--shots", type=int, default=4, help="Number of few-shot examples. 0 for zero-shot."
@@ -43,11 +41,11 @@ runs = 3 if args.shots > 0 else 1
 
 # run each dataset
 for experiment in [
-    #run_hcc,
-    #run_iris,
-    #run_mrpc,
+    # run_hcc,
+    # run_iris,
+    # run_mrpc,
     run_mscinli,
-    #run_xnli,
+    # run_xnli,
 ]:
     logging.info(f"Running experiment {experiment.__name__}")
     for model in models:
@@ -63,7 +61,9 @@ for experiment in [
                     seed=run,
                 )
             except Exception as e:
-                logging.error(f"Experiment {experiment} with model {model} failed with error: {e}")
+                logging.error(
+                    f"Experiment {experiment} with model {model} failed with error: {e}"
+                )
                 continue
         for run in range(runs):
             try:
@@ -74,7 +74,8 @@ for experiment in [
                     seed=run,
                 )
             except Exception as e:
-                logging.error(f"Experiment {experiment} with model {model} failed with error: {e}")
+                logging.error(
+                    f"Experiment {experiment} with model {model} failed with error: {e}"
+                )
                 continue
         logging.info(f"Experiment with model {model} completed successfully.")
-

@@ -12,8 +12,8 @@ MODELS = [
     "Qwen/Qwen3-Coder-30B-A3B-Instruct",
     "google/codegemma-7b",
     "meta-llama/CodeLlama-13b-hf",
-    #"gpt-3.5-turbo-instruct",
-    #"deepseek-v3",
+    # "gpt-3.5-turbo-instruct",
+    # "deepseek-v3",
 ]
 LANGUAGES = [
     "ar",
@@ -41,7 +41,7 @@ parser.add_argument(
     default=None,
     help="The language to evaluate on. Should be one of the languages in XNLI.",
 )
-parser.add_argument("--seed", type=int, default=42, help="The random seed.")
+parser.add_argument("--seed", type=int, default=0, help="The random seed.")
 parser.add_argument(
     "--shots", type=int, default=0, help="Number of few-shot examples. 0 for zero-shot."
 )
@@ -68,10 +68,14 @@ for model in models:
                 model,
                 lang=lang,
                 shots=shots,
-                seed=42,
+                seed=0,
             )
-            logging.info(f"Experiment with model {model} on language {lang} completed successfully.")
+            logging.info(
+                f"Experiment with model {model} on language {lang} completed successfully."
+            )
         except Exception as e:
-            logging.error(f"Experiment with model {model} on language {lang} failed with error: {e}")
+            logging.error(
+                f"Experiment with model {model} on language {lang} failed with error: {e}"
+            )
             continue
     logging.info(f"Experiment with model {model} completed.")

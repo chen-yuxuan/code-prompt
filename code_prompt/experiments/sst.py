@@ -146,12 +146,12 @@ def run_sst(
 
     model = clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
-    if shots == 0:
-        output_path = f"./outputs/sst2_{_model_name}_{shots}_shot"
-    else:
-        output_path = f"./outputs/sst2_{_model_name}_{shots}_shot_seed_{seed}"
+    output_path = f"./outputs/sst2_{_model_name}_{shots}_shot"
     if language.lower() not in "python":
         output_path += f"_{language.lower()}"
+    if shots > 0:
+        output_path += f"_seed_{seed}"
+
     if enforce_code_prompt == True and "code" not in model_name.lower():
         output_path += "_codeprompt"
     if not type_hint:

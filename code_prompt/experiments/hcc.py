@@ -1,7 +1,6 @@
 import json
 import logging
 
-from datasets import load_dataset
 from tqdm import tqdm
 from transformers import (
     AutoTokenizer,
@@ -11,7 +10,6 @@ from transformers import (
 import torch
 
 from ..prompts.hcc import get_nl_prompt, get_code_prompt
-from ..settings import HF_TOKEN
 from ..models.codellm import (
     code_complete_gemma,
     code_complete_qwen,
@@ -28,6 +26,7 @@ def run_hcc(
     seed: int = 0,
     type_hint: bool = True,
     implement: bool = False,
+    language: str = "python",
 ):
     logging.basicConfig(level=logging.INFO)
     # read json as list of dict, so testset
@@ -80,6 +79,7 @@ def run_hcc(
                 type_hint=type_hint,
                 implement=implement,
                 model=model_name,
+                language=language,
             )
             if "gemma" in model_name.lower():
                 response = code_complete_gemma(
@@ -121,6 +121,7 @@ def run_hcc(
                     type_hint=type_hint,
                     implement=implement,
                     model=model_name,
+                    language=language,
                 )
                 response = get_response(
                     prompt,
@@ -147,10 +148,11 @@ def run_hcc(
 
     model = clean_vllm_memory(model)
     _model_name = model_name.split("/")[-1].replace(".", "")
-    if shots == 0:
-        output_path = f"./outputs/hcc_{_model_name}_{shots}_shot"
-    else:
-        output_path = f"./outputs/hcc_{_model_name}_{shots}_shot_seed_{seed}"
+    output_path = f"./outputs/hcc_{_model_name}_{shots}_shot"
+    if language.lower() not in "python":
+        output_path += f"_{language.lower()}"
+    if shots > 0:
+        output_path += f"_seed_{seed}"
     if enforce_code_prompt == True:
         output_path += "_codeprompt"
     if not type_hint:

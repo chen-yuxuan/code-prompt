@@ -26,29 +26,26 @@ MODELS = [
     "CodeLlama-7b-Python",
     "_Llama-2-7b",
     "gpt-35-turbo-instruct_0_shot_codeprompt",
-    "gpt-35-turbo-instruct_0_shot."
+    "gpt-35-turbo-instruct_0_shot.",
 ]
 
 
 def create_excel(
-    dataset: str="agnews",
-    score: str="accuracy",
-    scenario: str="zeroshot",
+    dataset: str = "agnews",
+    score: str = "accuracy",
+    scenario: str = "zeroshot",
 ):
     read_path = f"eval/{scenario}-{dataset}-evaluation.json"
     # load json
     with open(read_path, "r") as f:
         data = json.load(f)
-    
+
     results: list[dict[str, float]] = []
     # if a model is not found, return -1 score
     for model in MODELS:
         for item in data:
-            if model in item["filename"]:               
-                results.append({
-                    "model": model,
-                    score: round(item[score] * 100, 1)
-                })
+            if model in item["filename"]:
+                results.append({"model": model, score: round(item[score] * 100, 1)})
                 break
     # save as excel
     df = pd.DataFrame(results)
