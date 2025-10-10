@@ -76,6 +76,25 @@ CODE_SHOT_PROMPT_CPP = (
     '\nstd::string text = "{text}";'
     '\nassert(classifySentiment(text) == "{label}");\n'
 )
+CODE_PROMPT_RUBY = (
+    "def classify_sentiment(text)\n"
+    "    # Classify the sentiment of the given text as either positive or negative.\n"
+    "    # Args:\n"
+    "    #   - text (String): The text to classify.\n"
+    "    # Returns:\n"
+    '    #   "positive" or "negative": The sentiment label of the text.\n'
+    "    # TODO: Implement classification logic\n"
+    "end\n\n"
+    "{few_shot_examples}"
+    "# Test case for inference\n"
+    'text = "{text}"\n'
+    'raise "Assertion failed" unless (classify_sentiment(text) == "'
+)
+CODE_PROMPT_SHOT_PROMPT_RUBY = (
+    "\n# Example test case"
+    '\ntext = "{text}"'
+    '\nraise "Assertion failed" unless (classify_sentiment(text) == "{label}")\n'
+)
 
 
 def get_nl_prompt(text: str, few_shot_examples: list[dict] = None) -> str:
@@ -106,6 +125,8 @@ def get_code_prompt(
         code_prompt, code_shot_prompt = CODE_PROMPT_JS, CODE_SHOT_PROMPT_JS
     elif language.lower() == "cpp":
         code_prompt, code_shot_prompt = CODE_PROMPT_CPP, CODE_SHOT_PROMPT_CPP
+    elif language.lower() == "ruby":
+        code_prompt, code_shot_prompt = CODE_PROMPT_RUBY, CODE_PROMPT_SHOT_PROMPT_RUBY
 
     if few_shot_examples:
         few_shot_str = ""

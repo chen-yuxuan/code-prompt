@@ -153,6 +153,41 @@ CODE_SHOT_PROMPT_CPP = (
     '\nassert(HCC_staging(text) == "{label}");\n'
 )
 
+CODE_PROMPT_RUBY = (
+    "def HCC_staging(text)\n"
+    "    # Classify the patient according to Milan criteria based on tumor size(s) in the text.\n\n"
+    "    # Milan criteria:\n"
+    "        - One single tumor with its diameter <= 5 cm,\n"
+    "        - Alternatively, up to 3 tumors, each with its diameter <= 3 cm.\n\n"
+    "    # Important notes on tumor size interpretation:\n"
+    "        - Tumor size (or diameter) may be reported in millimeters (mm) or centimeters (cm).\n"
+    "        - It may appear as:\n"
+    '            * A single value (e.g., "25 mm"),\n'
+    '            * Two dimensions (e.g., "25 x 20 mm"), or\n'
+    '            * Three dimensions (e.g., "2.5 x 2.0 x 1.8 cm").\n'
+    "        - In all cases, the diameter is defined as the largest single dimension."
+    "        - If a patient has multiple tumors, their sizes will be listed together as a comma-separated text, "
+    "    e.g., '5 mm, 30 mm, 3x4x5 mm'.\n\n"
+    "    # This function reads the provided `text` describing the patient's tumor size(s),\n"
+    "    # and classify whether the patient meets the Milan criteria.\n"
+    '    # If the patient is within the criteria, return "True". If not, return "False".\n'
+    "    # Args:\n"
+    "        - text (string): The input text of the HCC patient reporting tumor size(s).\n"
+    "    # Returns:\n"
+    '        - string: "True" if the patient meets the Milan criteria, "False" otherwise.\n'
+    "    # TODO: Implement Milan staging logic\n"
+    "end\n\n"
+    "{few_shot_examples}"
+    "# Test case for inference\n"
+    'text = "The tumor size(s) of the HCC patient: {text}"\n'
+    'raise "Assertion failed" unless (HCC_staging(text) == "'
+)
+CODE_PROMPT_SHOT_PROMPT_RUBY = (
+    "\n# Example test case"
+    '\ntext = "The tumor size(s) of the HCC patient: {text}"'
+    '\nraise "Assertion failed" unless (HCC_staging(text) == "{label}")\n'
+)
+
 
 def get_nl_prompt(example: str, few_shot_examples: list[dict] = None) -> str:
     """Get the natural language prompt."""
@@ -184,6 +219,8 @@ def get_code_prompt(
         code_prompt, code_shot_prompt = CODE_PROMPT_JS, CODE_SHOT_PROMPT_JS
     elif language.lower() == "cpp":
         code_prompt, code_shot_prompt = CODE_PROMPT_CPP, CODE_SHOT_PROMPT_CPP
+    elif language.lower() == "ruby":
+        code_prompt, code_shot_prompt = CODE_PROMPT_RUBY, CODE_PROMPT_SHOT_PROMPT_RUBY
     if few_shot_examples:
         few_shot_str = ""
         for e in few_shot_examples:

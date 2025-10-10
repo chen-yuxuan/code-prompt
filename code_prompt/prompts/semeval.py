@@ -114,6 +114,37 @@ CODE_SHOT_PROMPT_CPP = (
     '\nassert(classify_relation(text, subj, obj) == "{label}");\n'
 )
 
+CODE_PROMPT_RUBY = (
+    "def classify_relation(text, subj, obj)\n"
+    "    # Classify the relation of the subject entity and object entity from the given text\n"
+    "    # into one of the following 10 labels:\n"
+    '    # "Cause-Effect", "Component-Whole", "Content-Container", "Entity-Destination",\n'
+    '    # "Entity-Origin", "Instrument-Agency", "Member-Collection", "Message-Topic",\n'
+    '    # "Product-Producer", "Other", where "Other" means there is no relation between the two entities.\n'
+    "    # Args:\n"
+    "    #   - text (String): A text with a subject entity marked by <e1> and </e1>, and an object entity "
+    "    #     marked by <e2> and </e2>.\n"
+    "    #   - subj (String): The subject entity in the text.\n"
+    "    #   - obj (String): The object entity in the text.\n"
+    "    # Returns:\n"
+    '    #   "Cause-Effect", "Component-Whole", "Content-Container", "Entity-Destination",\n'
+    '    #   "Entity-Origin", "Instrument-Agency", "Member-Collection", "Message-Topic",\n'
+    '    #   "Product-Producer", "Other": The relation label between the subject entity and object entity.\n'
+    "    # TODO: Implement classification logic\n"
+    "end\n\n"
+    "{few_shot_examples}"
+    "# Test case for inference\n"
+    'text = "{text}"\n'
+    'subj, obj = "{subj}", "{obj}"\n'
+    'raise "Assertion failed" unless (classify_relation(text, subj, obj) == "'
+)
+CODE_PROMPT_SHOT_PROMPT_RUBY = (
+    "\n# Example test case"
+    '\ntext = "{text}"'
+    '\nsubj, obj = "{subj}", "{obj}"'
+    '\nraise "Assertion failed" unless (classify_relation(text, subj, obj) == "{label}")\n'
+)
+
 
 def tokens_to_text(example: dict) -> str:
     tokens = example["token"]
@@ -188,6 +219,8 @@ def get_code_prompt(
         code_prompt, code_shot_prompt = CODE_PROMPT_JS, CODE_SHOT_PROMPT_JS
     elif language.lower() == "cpp":
         code_prompt, code_shot_prompt = CODE_PROMPT_CPP, CODE_SHOT_PROMPT_CPP
+    elif language.lower() == "ruby":
+        code_prompt, code_shot_prompt = CODE_PROMPT_RUBY, CODE_PROMPT_SHOT_PROMPT_RUBY
     if few_shot_examples:
         few_shot_str = ""
         for e in few_shot_examples:

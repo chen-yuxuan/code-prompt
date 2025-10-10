@@ -43,7 +43,9 @@ def clean_vllm_memory(model):
     return None
 
 
-def few_shot_per_class(dataset, k=1, seed=0, label_column_name="label", return_rest=False):
+def few_shot_per_class(
+    dataset, k=1, seed=0, label_column_name="label", return_rest=False
+):
     rng = random.Random(seed)
     # group indices by label
     indices_per_class = defaultdict(list)
@@ -61,9 +63,11 @@ def few_shot_per_class(dataset, k=1, seed=0, label_column_name="label", return_r
     if isinstance(dataset, list):
         if return_rest:
             rest_indices = list(set(range(len(dataset))) - set(sampled_indices))
-            return [dataset[i] for i in sampled_indices], [dataset[i] for i in rest_indices]
+            return [dataset[i] for i in sampled_indices], [
+                dataset[i] for i in rest_indices
+            ]
         return [dataset[i] for i in sampled_indices]
-    
+
     if return_rest:
         rest_indices = list(set(range(len(dataset))) - set(sampled_indices))
         return dataset.select(sampled_indices), dataset.select(rest_indices)

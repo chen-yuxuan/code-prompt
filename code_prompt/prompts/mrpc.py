@@ -96,6 +96,31 @@ CODE_SHOT_PROMPT_CPP = (
     '\nassert(detect_paraphrase(sentence1, sentence2) == "{label}");\n'
 )
 
+CODE_PROMPT_RUBY = (
+    "def detect_paraphrase(sentence1, sentence2)\n"
+    "    # Detect if two sentences are paraphrases of each other.\n"
+    "    # Paraphrase means the two sentences express the same meaning.\n"
+    "    # Args:\n"
+    "    #     - sentence1 (String): The first sentence.\n"
+    "    #     - sentence2 (String): The second sentence.\n"
+    "    # Returns:\n"
+    '    #     "equivalent" or "not_equivalent": "equivalent" if the sentences are paraphrases, '
+    '"not_equivalent" otherwise.\n'
+    "    # TODO: Implement paraphrase detection logic\n"
+    "end\n\n"
+    "{few_shot_examples}"
+    "# Test case for inference\n"
+    'sentence1 = "{sentence1}"\n'
+    'sentence2 = "{sentence2}"\n'
+    'raise "Assertion failed" unless (detect_paraphrase(sentence1, sentence2) == "'
+)
+CODE_PROMPT_SHOT_PROMPT_RUBY = (
+    "\n# Example test case"
+    '\nsentence1 = "{sentence1}"'
+    '\nsentence2 = "{sentence2}"'
+    '\nraise "Assertion failed" unless (detect_paraphrase(sentence1, sentence2) == "{label}")\n'
+)
+
 
 def map_label_id_to_str(label_id: int) -> str:
     """Map label id to string."""
@@ -141,6 +166,8 @@ def get_code_prompt(
         code_prompt, code_shot_prompt = CODE_PROMPT_JS, CODE_SHOT_PROMPT_JS
     elif language.lower() == "cpp":
         code_prompt, code_shot_prompt = CODE_PROMPT_CPP, CODE_SHOT_PROMPT_CPP
+    elif language.lower() == "ruby":
+        code_prompt, code_shot_prompt = CODE_PROMPT_RUBY, CODE_PROMPT_SHOT_PROMPT_RUBY
     if few_shot_examples:
         few_shot_str = ""
         for e in few_shot_examples:

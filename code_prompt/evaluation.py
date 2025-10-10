@@ -205,7 +205,9 @@ def get_model(file_name: str) -> str:
     if len(parts) < 3:
         raise ValueError(f"Invalid file name format: {file_name}")
     model = parts[1].lower()
-    if ("gpt" in model.lower() or "deepseek" in model.lower()) and "codeprompt" in file_name.lower():
+    if (
+        "gpt" in model.lower() or "deepseek" in model.lower()
+    ) and "codeprompt" in file_name.lower():
         model += "_coder"
     return model
 
@@ -229,7 +231,11 @@ def get_seed(file_name: str) -> int | None:
     if "_seed_" not in file_name:
         return None
     idx = file_name.index("_seed_") + len("_seed_")
-    end_idx = file_name.index("_", idx) if "_" in file_name[idx:] else file_name.index(".", idx)
+    end_idx = (
+        file_name.index("_", idx)
+        if "_" in file_name[idx:]
+        else file_name.index(".", idx)
+    )
     return int(file_name[idx:end_idx])
 
 
@@ -241,6 +247,8 @@ def get_language(file_name: str) -> str:
         return "js"
     elif "cpp" in file_name.lower():
         return "cpp"
+    elif "ruby" in file_name.lower():
+        return "ruby"
     return "python"
 
 
@@ -330,7 +338,7 @@ def evaluate_directory_few_shot(dir_path: str) -> list[dict]:
             report = evaluate_results(file_path)
             reports.append(report)
     # order by filename
-    reports = sorted(reports, key=itemgetter('dataset', 'model'))
+    reports = sorted(reports, key=itemgetter("dataset", "model"))
     merged_reports = {}
     for report in reports:
         filename = report["filename"]
@@ -393,7 +401,7 @@ def evaluate_directory_few_shot(dir_path: str) -> list[dict]:
             merged["stddev_f1_macro"] = std(f1s) if f1s else 0.0
         final_reports.append(merged)
     # order by filename
-    final_reports = sorted(reports, key=itemgetter('dataset', 'model'))
+    final_reports = sorted(reports, key=itemgetter("dataset", "model"))
     return final_reports
 
 

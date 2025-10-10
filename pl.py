@@ -21,10 +21,10 @@ ALL_MODELS = [
     "deepseek-v3",
 ]
 
-LANGUAGES = ["js", "cpp"]
+LANGUAGES = ["ruby"]
 
 parser = argparse.ArgumentParser(
-    description="Collect arguments for experimenting 3 programming languages with 4 datasets."
+    description="Collect arguments for experimenting 4 programming languages with 4 datasets."
 )
 parser.add_argument("--seed", type=int, default=0, help="The random seed.")
 parser.add_argument(
