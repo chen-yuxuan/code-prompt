@@ -3,6 +3,7 @@ from typing import List, Dict, Any
 import random
 
 from .base import RCDataset
+from ..prompts.semeval import get_relation_without_order
 
 
 logger = getLogger(__name__)
@@ -35,6 +36,10 @@ class SemEvalDataset(RCDataset):
                 self.insert_entity_markers,
                 fn_kwargs={"text_column_name": self.text_column_name},
             )
+        # add new column "relation_wo_order" to remove "(e1,e2)" or "(e2,e1)" in the "relation" string
+        self.dataset = self.dataset.map(
+            lambda example: {"relation_wo_order": get_relation_without_order(example)},
+        )
 
     def sample(self, n: int, seed: int = 0) -> List[dict]:
         """Randomly sample `n` examples from the dataset."""
@@ -81,7 +86,7 @@ class SemEvalFewShotDataset(SemEvalDataset):
         """For each class, maintain a list of indices from this class."""
         class_indices: Dict[str, List[int]] = {}
         for idx, example in enumerate(self.dataset):
-            label = example[self.label_column_name]
+            label = example["relation_wo_order"]
             if label not in class_indices:
                 class_indices[label] = []
             class_indices[label].append(idx)

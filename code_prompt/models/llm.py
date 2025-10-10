@@ -49,6 +49,7 @@ def get_response(
     if isinstance(client, str):
         client = get_client(client, api_key=api_key)
     if isinstance(client, OpenAI):  # OpenAI or DeepSeek
+        time.sleep(2.5)
         if enforce_code_prompt:
             response = client.completions.create(
                 model=model if "deepseek" not in model.lower() else "deepseek-chat",
@@ -56,9 +57,6 @@ def get_response(
                 suffix='")',
                 max_tokens=max_tokens,
                 temperature=0.0,
-            )
-            raise ValueError(
-                f"\nprompt:\n{prompt}\nresponse: {response.choices[0].text.strip()}"
             )
             return response.choices[0].text.strip()
         else:

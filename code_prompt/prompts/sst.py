@@ -23,6 +23,7 @@ CODE_PROMPT = (
     'text = "{text}"\n'
     'assert (classify_sentiment(text) == "'
 )
+
 CODE_SHOT_PROMPT = (
     "\n# Example test case"
     '\ntext = "{text}"'

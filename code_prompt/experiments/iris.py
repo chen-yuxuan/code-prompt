@@ -33,8 +33,8 @@ def run_iris(
     testset = load_dataset("scikit-learn/iris", split="train")
     if shots > 0:
         trainset = load_dataset("scikit-learn/iris", split="train")
-        few_shot_examples = few_shot_per_class(
-            trainset, k=shots, seed=seed, label_column_name="Species"
+        few_shot_examples, testset = few_shot_per_class(
+            trainset, k=shots, seed=seed, label_column_name="Species", return_rest=True
         )
     else:
         few_shot_examples = None

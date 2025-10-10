@@ -142,7 +142,7 @@ def get_obj_text(example):
     return " ".join(obj_tokens)
 
 
-def get_relation_without_order(example):
+def get_relation_without_order(example) -> str:
     # to remove "(e1,e2)" or "(e2,e1)" in the relation string
     # chunk at the first "(" and take the first part
     relation = example["relation"].split("(")[0].strip()

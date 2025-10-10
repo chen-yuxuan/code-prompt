@@ -1,4 +1,5 @@
 import json
+from operator import itemgetter
 import os
 
 from sklearn.metrics import matthews_corrcoef, f1_score
@@ -199,10 +200,14 @@ def get_dataset(file_name: str) -> str:
 
 def get_model(file_name: str) -> str:
     # model name is the substring between the first and second underscore
+    file_name = file_name.replace("xnli_en", "xnli")
     parts = file_name.split("_")
     if len(parts) < 3:
         raise ValueError(f"Invalid file name format: {file_name}")
-    return parts[1].lower()
+    model = parts[1].lower()
+    if ("gpt" in model.lower() or "deepseek" in model.lower()) and "codeprompt" in file_name.lower():
+        model += "_coder"
+    return model
 
 
 def get_shot(file_name: str) -> int:
@@ -216,18 +221,16 @@ def get_shot(file_name: str) -> int:
 
 
 def get_seed(file_name: str) -> int | None:
+    # seed is the number after "_seed_" in the file name
     # example: outputs/sst2_gpt-35-turbo-instruct_4_shot_seed_1_codeprompt.json
     # return: 1
-    parts = file_name.split("_")
-    if "seed" not in parts:
+    # example: outputs/sst2_gpt-35-turbo-instruct_2_shot_seed_0.json
+    # return: 0
+    if "_seed_" not in file_name:
         return None
-    seed_idx = parts.index("seed")
-    if seed_idx + 1 >= len(parts):
-        return None
-    try:
-        return int(parts[seed_idx + 1])
-    except ValueError:
-        return None
+    idx = file_name.index("_seed_") + len("_seed_")
+    end_idx = file_name.index("_", idx) if "_" in file_name[idx:] else file_name.index(".", idx)
+    return int(file_name[idx:end_idx])
 
 
 def get_language(file_name: str) -> str:
@@ -327,20 +330,12 @@ def evaluate_directory_few_shot(dir_path: str) -> list[dict]:
             report = evaluate_results(file_path)
             reports.append(report)
     # order by filename
-    reports = sorted(reports, key=lambda x: x["filename"])
-    # now reports is a list of dicts, please merge them by filename without seed
-    # for example "mrpc_CodeLlama-13b-Python-hf_4_shot_seed_1.json" and "mrpc_CodeLlama-13b-Python-hf_4_shot_seed_2.json"
-    # and "mrpc_CodeLlama-13b-Python-hf_4_shot_seed_3.json" should be merged into one element
-    # the new element should have the average accuracy and average redundancy as well as stddev of accuracy and redundancy
-    # also the number of seeds
+    reports = sorted(reports, key=itemgetter('dataset', 'model'))
     merged_reports = {}
     for report in reports:
         filename = report["filename"]
         # remove seed part
-        if "_seed_" in filename:
-            base_filename = filename[: filename.index("_seed_")]
-        else:
-            base_filename = filename
+        base_filename = f"{report["dataset"]}_{report['model']}"
         if base_filename not in merged_reports:
             merged_reports[base_filename] = {
                 "filename": base_filename,
@@ -398,5 +393,20 @@ def evaluate_directory_few_shot(dir_path: str) -> list[dict]:
             merged["stddev_f1_macro"] = std(f1s) if f1s else 0.0
         final_reports.append(merged)
     # order by filename
-    final_reports = sorted(final_reports, key=lambda x: x["filename"])
+    final_reports = sorted(reports, key=itemgetter('dataset', 'model'))
     return final_reports
+
+
+def evaluate_directory_programming_language(dir_path: str) -> list[dict]:
+    """Evaluate all files in the directory and group results by programming language.
+    Returns a list of evaluation reports for each programming language.
+    """
+    reports = []
+    for file_name in os.listdir(dir_path):
+        if file_name.endswith(".json") or file_name.endswith(".jsonl"):
+            file_path = os.path.join(dir_path, file_name)
+            report = evaluate_results(file_path)
+            reports.append(report)
+    # order by filename
+    reports = sorted(reports, key=lambda x: x["filename"])
+    return reports

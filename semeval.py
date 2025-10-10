@@ -83,7 +83,7 @@ login(token=HF_TOKEN)
 
 seed_everything(args.seed)
 models = MODELS if args.model is None else [args.model]
-runs = 3 if args.shots > 0 else 1
+runs = 1 if args.shots > 0 else 1
 shots = 4 if args.shots > 4 else args.shots
 
 for model in models:
@@ -96,7 +96,7 @@ for model in models:
                 model,
                 enforce_code_prompt=args.enforce_code_prompt,
                 shots=shots,
-                seed=run,
+                seed=0,
                 type_hint=args.type_hint,
                 language=args.language,
             )
