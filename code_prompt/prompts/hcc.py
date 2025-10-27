@@ -182,7 +182,7 @@ CODE_PROMPT_RUBY = (
     'text = "The tumor size(s) of the HCC patient: {text}"\n'
     'raise "Assertion failed" unless (HCC_staging(text) == "'
 )
-CODE_PROMPT_SHOT_PROMPT_RUBY = (
+CODE_SHOT_PROMPT_RUBY = (
     "\n# Example test case"
     '\ntext = "The tumor size(s) of the HCC patient: {text}"'
     '\nraise "Assertion failed" unless (HCC_staging(text) == "{label}")\n'
@@ -220,7 +220,7 @@ def get_code_prompt(
     elif language.lower() == "cpp":
         code_prompt, code_shot_prompt = CODE_PROMPT_CPP, CODE_SHOT_PROMPT_CPP
     elif language.lower() == "ruby":
-        code_prompt, code_shot_prompt = CODE_PROMPT_RUBY, CODE_PROMPT_SHOT_PROMPT_RUBY
+        code_prompt, code_shot_prompt = CODE_PROMPT_RUBY, CODE_SHOT_PROMPT_RUBY
     if few_shot_examples:
         few_shot_str = ""
         for e in few_shot_examples:
