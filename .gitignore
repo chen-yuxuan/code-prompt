@@ -194,7 +194,10 @@ cython_debug/
 .cursorindexingignore
 
 .vscode/
+.idea/
 
 /data
 /outputs
 /eval
+*.ipynb
+.DS_Store

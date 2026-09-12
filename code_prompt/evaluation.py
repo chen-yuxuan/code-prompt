@@ -125,7 +125,7 @@ def redundancy_score(response: str, pred: str | int) -> float | None:
     )
     # special tokens from codegemma
     response = response.replace("<eos>", "").replace("<|file_separator|>", "")
-    # markdown code blocks
+    # markdown blocks
     response = response.replace("```python", "").replace("```", "")
 
     if pred is None:
